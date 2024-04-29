@@ -14,7 +14,7 @@ export class SeedInitialUser1667911463021 implements MigrationInterface {
     const configService = appCtx.get(ConfigService);
 
     await queryRunner.manager.save(
-      queryRunner.manager.create<User>(User, {
+      queryRunner.manager.create(User, {
         uuid: uuid(),
         name: configService.get<string>('INITIAL_USER_NAME'),
         email: configService.get<string>('INITIAL_USER_EMAIL'),
