@@ -7,10 +7,13 @@ import { ResponseFormatInterceptor } from './utils/response-format.interceptor';
 import { ExceptionFormatFilter } from './utils/exception-format.filter';
 import { DomainExceptionInterceptor } from './utils/domain-exception.filter';
 import { Logger, LoggerErrorInterceptor, LoggerModule, PinoLogger } from 'nestjs-pino';
+import helmet from 'helmet';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const { httpAdapter } = app.get(HttpAdapterHost);
+  app.use(helmet());
+  app.enableCors();
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
 

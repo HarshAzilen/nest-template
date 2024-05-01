@@ -5,6 +5,7 @@ import { PostsModule } from './posts/posts.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from 'nestjs-pino';
+import { ThrottlerModule } from '@nestjs/throttler';
 const levels = {
   http: 10,
   debug: 20,
@@ -15,6 +16,23 @@ const levels = {
 };
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     LoggerModule.forRoot({
       pinoHttp: {
         customProps: (_req, _res) => ({
