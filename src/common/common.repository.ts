@@ -1,4 +1,4 @@
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 export class CommonRepository<Entity> {
   repository: Repository<Entity>;
@@ -6,6 +6,6 @@ export class CommonRepository<Entity> {
     this.repository = repository;
   }
   async getData(): Promise<Entity[]> {
-    return this.repository.find();
+    return await this.repository.find();
   }
 }
