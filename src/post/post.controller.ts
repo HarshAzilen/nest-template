@@ -11,7 +11,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PostsService } from './posts.service';
+import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
@@ -20,26 +20,29 @@ import { SetResponseMessage } from '../utils/response-format.interceptor';
 
 @UseGuards(JwtAuthGuard)
 @SerializeOptions({ strategy: 'excludeAll' })
-@Controller('posts')
-export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+@Controller('post')
+export class PostController {
+  constructor(private readonly postService: PostService) {}
 
   @SetResponseMessage('Create a new post')
   @Post()
   async create(@Body() createPostDto: CreatePostDto, @AuthUser() authUser: AuthUser) {
-    return this.postsService.create(createPostDto, authUser.id);
+    return this.postService.create(createPostDto, authUser.id);
   }
-
+  @Post()
+  async upload(@Body() createPostDto: CreatePostDto) {
+    return this.postService.getData;
+  }
   @SetResponseMessage('Get all posts')
   @Get()
   async findAll() {
-    return this.postsService.findAll();
+    return this.postService.findAll();
   }
 
   @SetResponseMessage('Get post details')
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const post = await this.postsService.findOne(uuid);
+    const post = await this.postService.findOne(uuid);
     if (!post) {
       throw new NotFoundException();
     }
@@ -49,12 +52,12 @@ export class PostsController {
   @SetResponseMessage('Update post')
   @Patch(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(uuid, updatePostDto);
+    return this.postService.update(uuid, updatePostDto);
   }
 
   @SetResponseMessage('Delete post')
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
-    return this.postsService.remove(uuid);
+    return this.postService.remove(uuid);
   }
 }

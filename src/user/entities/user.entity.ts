@@ -1,10 +1,10 @@
 import { Expose } from 'class-transformer';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from 'typeorm';
 
-import { Post } from '../../posts/entities/post.entity';
+import { PostEntity } from '../../post/entities/post.entity';
 
-@Entity()
-export class User {
+@Entity('user')
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -25,8 +25,8 @@ export class User {
   password!: string;
 
   @Expose()
-  @OneToMany(() => Post, (post) => post.user)
-  posts!: Post[];
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts!: PostEntity[];
 
   @CreateDateColumn({
     name: 'created_at',
