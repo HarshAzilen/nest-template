@@ -1,5 +1,12 @@
 openapi: 3.0.0
 paths:
+  /health-check:
+    get:
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        '200':
+          description: ''
   /auth/login:
     post:
       operationId: AuthController_login
