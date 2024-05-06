@@ -5,6 +5,8 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AppController } from './app.controllers';
+import { AppService } from './app.service';
 const levels = {
   http: 10,
   debug: 20,
@@ -57,7 +59,7 @@ const levels = {
     AuthModule,
     PostModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
