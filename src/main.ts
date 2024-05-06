@@ -8,10 +8,16 @@ import { DomainExceptionInterceptor } from './utils/domain-exception.filter';
 import * as fs from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as yaml from 'js-yaml';
+import { Logger, LoggerErrorInterceptor, LoggerModule, PinoLogger } from 'nestjs-pino';
+import helmet from 'helmet';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const { httpAdapter } = app.get(HttpAdapterHost);
+  app.use(helmet());
+  app.enableCors();
+  app.useLogger(app.get(Logger));
+  app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
   app.useGlobalFilters(new ExceptionFormatFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
@@ -42,8 +48,10 @@ async function bootstrap(): Promise<void> {
 
   const configService = app.get<ConfigService>(ConfigService);
   const expressInstance = app.getHttpAdapter().getInstance();
-
-  await app.listen(3000);
+  await app.listen(configService.get<number>('PORT') || 3000, () => {
+    PinoLogger.prototype.info('Server is running on Port:' + configService.get<number>('PORT'));
+    PinoLogger.prototype.info('http://localhost:' + configService.get<number>('PORT'));
+  });
 }
 
 void bootstrap();

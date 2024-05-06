@@ -42,6 +42,12 @@ INITIAL_USER_PASSWORD=
 JWT_SECRET=
 
 ```
+```bash
+cp .env.example .env
+```
+
+- add all the required fields for the data base connection and initial user details on the file
+
 
 ## Before running the app
 Migrate with this shortcut to add required entities to your Postgres database. Check [TypeORM docs here](https://typeorm.io/migrations#running-and-reverting-migrations) for more features.
