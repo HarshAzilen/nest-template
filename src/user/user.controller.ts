@@ -12,18 +12,18 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { PostsService } from '../posts/posts.service';
+import { PostService } from '../post/post.service';
 import { SetResponseMessage } from '../utils/response-format.interceptor';
 
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @UseGuards(JwtAuthGuard)
 @SerializeOptions({ strategy: 'excludeAll' })
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService, private readonly postsService: PostsService) {}
+@Controller('user')
+export class UserController {
+  constructor(private readonly usersService: UserService, private readonly postsService: PostService) {}
 
   @SetResponseMessage('Create a new user')
   @Post()

@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { User } from '../users/entities/user.entity';
-import { Post } from '../posts/entities/post.entity';
+import { UserEntity } from '../user/entities/user.entity';
+import { PostEntity } from '../post/entities/post.entity';
 
-import { CreateUsersPosts1666871115593 } from './migrations/1666871115593-CreateUsersPosts';
-import { SeedInitialUser1667911463021 } from './migrations/1667911463021-SeedInitialUser';
+// import { CreateUsersPosts1666871115593 } from './migrations/1666871115593-CreateUsersPosts';
+// import { SeedInitialUser1667911463021 } from './migrations/1667911463021-SeedInitialUser';
 
 @Module({
   imports: [
@@ -20,9 +20,14 @@ import { SeedInitialUser1667911463021 } from './migrations/1667911463021-SeedIni
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [User, Post],
+        entities: [UserEntity, PostEntity],
         synchronize: false,
-        migrations: [CreateUsersPosts1666871115593, SeedInitialUser1667911463021],
+        //migrations: [CreateUsersPosts1666871115593, SeedInitialUser1667911463021],
+        migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+        cli: {
+          entitiesDir: 'src',
+          migrationsDir: 'src/database/migrations',
+        },
       }),
     }),
   ],

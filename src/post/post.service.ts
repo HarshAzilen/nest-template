@@ -5,41 +5,43 @@ import { v4 as uuid } from 'uuid';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Post } from './entities/post.entity';
+import { PostEntity } from './entities/post.entity';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
-export class PostsService {
+export class PostService extends CommonService<PostEntity> {
   constructor(
-    @InjectRepository(Post)
-    private postsRepository: Repository<Post>,
-  ) {}
-
+    @InjectRepository(PostEntity)
+    private postRepository: Repository<PostEntity>,
+  ) {
+    super(postRepository);
+  }
   async create(createPostDto: CreatePostDto, userId: number) {
-    const newPost = this.postsRepository.create({
+    const newPost = this.postRepository.create({
       uuid: uuid(),
       user: { id: userId },
       ...createPostDto,
     });
-    return this.postsRepository.save(newPost);
+    return this.postRepository.save(newPost);
   }
 
   async findAll() {
-    return this.postsRepository.find();
+    return this.postRepository.find();
   }
 
   async findOne(uuid: string) {
-    return this.postsRepository.findOneBy({ uuid });
+    return this.postRepository.findOneBy({ uuid });
   }
 
   async findByUserUuid(uuid: string) {
-    return this.postsRepository.findBy({ user: { uuid } });
+    return this.postRepository.findBy({ user: { uuid } });
   }
 
   async update(uuid: string, updatePostDto: UpdatePostDto) {
-    await this.postsRepository.update({ uuid }, updatePostDto);
+    await this.postRepository.update({ uuid }, updatePostDto);
   }
 
   async remove(uuid: string) {
-    await this.postsRepository.delete({ uuid });
+    await this.postRepository.delete({ uuid });
   }
 }

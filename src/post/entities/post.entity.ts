@@ -10,10 +10,11 @@ import {
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 
-import { User } from '../../users/entities/user.entity';
+import { UserEntity } from '../../user/entities/user.entity';
+import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 
-@Entity()
-export class Post {
+@Entity('post')
+export class PostEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -30,10 +31,10 @@ export class Post {
   @Expose()
   content!: string;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   @Expose()
-  user!: User;
+  user!: UserEntity;
 
   @CreateDateColumn({
     name: 'created_at',
