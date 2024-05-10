@@ -52,7 +52,7 @@ const levels = {
         },
       },
     }),
-    ConfigModule.forRoot({ ignoreEnvFile: false, envFilePath: '.env' }),
+    ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: false, envFilePath: '.env' }),
     DatabaseModule,
     AuthModule,
     PostModule,

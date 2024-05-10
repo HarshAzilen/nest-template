@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/post.entity';
-import { CommonService } from 'src/common/common.service';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class PostService extends CommonService<PostEntity> {
