@@ -11,7 +11,7 @@ import {
 import { Expose } from 'class-transformer';
 
 import { UserEntity } from '../../user/entities/user.entity';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
+import { EntityRelationalHelper } from '../../utils/relational-entity-helper';
 
 @Entity('post')
 export class PostEntity extends EntityRelationalHelper {

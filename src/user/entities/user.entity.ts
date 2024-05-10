@@ -2,7 +2,7 @@ import { Expose } from 'class-transformer';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from 'typeorm';
 
 import { PostEntity } from '../../post/entities/post.entity';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
+import { EntityRelationalHelper } from '../../utils/relational-entity-helper';
 
 @Entity('user')
 export class UserEntity extends EntityRelationalHelper {
