@@ -4,20 +4,23 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { HashingService } from '../auth/hashing.service';
-import { PostgresErrorCode } from '../database/postgress-error-code.enum';
+import { PostgresErrorCode } from '../../database/postgress-error-code.enum';
 
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DuplicateUserException } from './exceptions/duplicate-user.exception';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
-export class UserService {
+export class UserService extends CommonService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     private hashingService: HashingService,
-  ) {}
+  ) {
+    super(userRepository);
+  }
 
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await this.hashingService.hashString(createUserDto.password);

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PostModule } from './post/post.module';
 import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controllers';
 import { AppService } from './app.service';
+import { VenueoperatorModule } from './modules/venueoperator/venueoperator.module';
 const levels = {
   http: 10,
   debug: 20,
@@ -57,7 +57,7 @@ const levels = {
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: false, envFilePath: '.env' }),
     DatabaseModule,
     AuthModule,
-    PostModule,
+    VenueoperatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,7 +4,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { DatabaseModule } from './database.module';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../modules/auth/auth.module';
 
 @Module({
   imports: [
