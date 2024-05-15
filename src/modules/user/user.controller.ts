@@ -12,9 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { PostService } from '../post/post.service';
-import { SetResponseMessage } from '../utils/response-format.interceptor';
-
+import { SetResponseMessage } from '../../utils/response-format.interceptor';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -23,7 +21,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @SerializeOptions({ strategy: 'excludeAll' })
 @Controller('user')
 export class UserController {
-  constructor(private readonly usersService: UserService, private readonly postsService: PostService) {}
+  constructor(private readonly usersService: UserService) {}
 
   @SetResponseMessage('Create a new user')
   @Post()
@@ -58,11 +56,5 @@ export class UserController {
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
     return this.usersService.remove(uuid);
-  }
-
-  @SetResponseMessage('Get all posts from the user')
-  @Get(':uuid/posts')
-  async findPosts(@Param('uuid') uuid: string) {
-    return this.postsService.findByUserUuid(uuid);
   }
 }

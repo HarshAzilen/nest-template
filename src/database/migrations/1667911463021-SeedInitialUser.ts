@@ -3,8 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { HashingService } from '../../auth/hashing.service';
-import { UserEntity } from '../../user/entities/user.entity';
+import { HashingService } from '../../modules/auth/hashing.service';
+import { UserEntity } from '../../modules/user/entities/user.entity';
 import { TypeORMCLIModule } from '../typeorm-cli.module';
 
 export class SeedInitialUser1667911463021 implements MigrationInterface {

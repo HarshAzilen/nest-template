@@ -5,10 +5,9 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { UserEntity } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
-import { PostModule } from '../post/post.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), forwardRef(() => AuthModule), PostModule],
+  imports: [TypeOrmModule.forFeature([UserEntity]), forwardRef(() => AuthModule)],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
