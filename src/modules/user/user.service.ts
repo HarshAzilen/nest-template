@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-
 import { HashingService } from '../auth/hashing.service';
 import { PostgresErrorCode } from '../../database/postgress-error-code.enum';
-
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DuplicateUserException } from './exceptions/duplicate-user.exception';
 import { CommonService } from 'src/common/common.service';
 
 @Injectable()
@@ -32,11 +29,11 @@ export class UserService extends CommonService<UserEntity> {
     try {
       await this.userRepository.save(newUser);
     } catch (error: unknown) {
-      if (error instanceof QueryFailedError) {
-        if ((error as any).code === PostgresErrorCode.UniqueViolation) {
-          throw new DuplicateUserException();
-        }
-      }
+      // if (error instanceof QueryFailedError) {
+      //   if ((error as any).code === PostgresErrorCode.UniqueViolation) {
+      //     throw new DuplicateUserException();
+      //   }
+      // }
     }
     return newUser;
   }

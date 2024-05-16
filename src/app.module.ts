@@ -7,6 +7,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controllers';
 import { AppService } from './app.service';
 import { VenueoperatorModule } from './modules/venueoperator/venueoperator.module';
+import { CronJobModule } from './modules/cronjob/cronjob.module';
+import { ServerSentEventModule } from './modules/server-sent-event/server-sent-event.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 const levels = {
   http: 10,
   debug: 20,
@@ -58,6 +62,11 @@ const levels = {
     DatabaseModule,
     AuthModule,
     VenueoperatorModule,
+    CronJobModule,
+    ServerSentEventModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
