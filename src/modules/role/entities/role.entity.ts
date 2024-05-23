@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import { Expose } from 'class-transformer';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { UserEntity } from '../../../modules/user/entities/user.entity';
 
 @Entity('role')
 export class RoleEntity extends EntityRelationalHelper {

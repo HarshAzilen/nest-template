@@ -11,7 +11,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
-import { RoleEntity } from 'src/modules/role/entities/role.entity';
+import { RoleEntity } from '../../../modules/role/entities/role.entity';
 
 @Entity('user')
 export class UserEntity extends EntityRelationalHelper {
