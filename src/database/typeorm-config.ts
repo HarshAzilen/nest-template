@@ -14,21 +14,16 @@ export class AppDataSource {
     return {
       type: 'mssql',
       host: configService.get<string>('DATABASE_HOST'),
-      port: configService.get<number>('DATABASE_PORT', 3000),
+      port: +configService.get<number>('DATABASE_PORT'),
       username: configService.get<string>('DATABASE_USERNAME'),
       password: configService.get<string>('DATABASE_PASSWORD'),
       database: configService.get<string>('DATABASE_NAME'),
       synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', false),
+      schema: configService.get<string>('SCHEMA'),
       dropSchema: false,
-      // keepConnectionAlive: true,
       logging: process.env.NODE_ENV !== 'production',
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/../**/*-migrations.{ts,js}'],
-      // cli: {
-      //   entitiesDir: 'src',
-      //   migrationsDir: 'src/database/migrations',
-      //   subscribersDir: 'subscriber',
-      // },
       extra: {
         trustServerCertificate: true,
         max: configService.get<number>('DATABASE_MAX_CONNECTIONS', 100),

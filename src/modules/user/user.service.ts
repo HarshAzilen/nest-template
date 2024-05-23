@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
-import { CommonService } from 'src/common/common.service';
+import { CommonService } from '../../common/common.service';
 import { isNull, isUndefined } from '../../utils/validation.util';
 import { compare, hash } from 'bcrypt';
 import { UserRepository } from './user.repository';
