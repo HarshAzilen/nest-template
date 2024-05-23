@@ -1,11 +1,10 @@
-import { Repository } from 'typeorm';
 import { CommonRepository } from './common.repository';
 
 class CommonService<Entity> {
   repository: CommonRepository<Entity>;
 
-  constructor(repository: Repository<Entity>) {
-    this.repository = new CommonRepository(repository);
+  constructor(repository: CommonRepository<Entity>) {
+    this.repository = repository;
   }
 
   async getData(): Promise<Entity[]> {

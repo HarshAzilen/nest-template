@@ -11,6 +11,9 @@ import { CronJobModule } from './modules/cronjob/cronjob.module';
 import { ServerSentEventModule } from './modules/server-sent-event/server-sent-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { JwtModule } from './modules/jwt/jwt.module';
+import { RoleModule } from './modules/role/role.module';
+import { UserModule } from './modules/user/user.module';
 const levels = {
   http: 10,
   debug: 20,
@@ -61,12 +64,15 @@ const levels = {
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: false, envFilePath: '.env' }),
     DatabaseModule,
     AuthModule,
+    JwtModule,
     VenueoperatorModule,
     CronJobModule,
     ServerSentEventModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
     }),
+    UserModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -14,31 +14,31 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { SetResponseMessage } from '../../utils/response-format.interceptor';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/request-user.dto';
+import { UpdateUserDto } from './dto/response-user.dto';
 
 @UseGuards(JwtAuthGuard)
 @SerializeOptions({ strategy: 'excludeAll' })
 @Controller('user')
 export class UserController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @SetResponseMessage('Create a new user')
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    return this.userService.create(createUserDto);
   }
 
   @SetResponseMessage('Get all users')
   @Get()
   async findAll() {
-    return this.usersService.findAll();
+    return this.userService.findAll();
   }
 
   @SetResponseMessage('Get user details')
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
-    const user = await this.usersService.findOne(uuid);
+    const user = await this.userService.findOne(uuid);
     if (!user) {
       throw new NotFoundException();
     }
@@ -48,13 +48,13 @@ export class UserController {
   @SetResponseMessage('Update user')
   @Patch(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateUserDto: UpdateUserDto) {
-    await this.usersService.update(uuid, updateUserDto);
+    await this.userService.update(uuid, updateUserDto);
     return this.findOne(uuid);
   }
 
   @SetResponseMessage('Delete user')
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
-    return this.usersService.remove(uuid);
+    return this.userService.remove(uuid);
   }
 }

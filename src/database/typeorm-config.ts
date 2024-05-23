@@ -12,7 +12,7 @@ export class AppDataSource {
     const configService = await appCtx.get(ConfigService);
 
     return {
-      type: 'postgres',
+      type: 'mssql',
       host: configService.get<string>('DATABASE_HOST'),
       port: configService.get<number>('DATABASE_PORT', 3000),
       username: configService.get<string>('DATABASE_USERNAME'),
@@ -30,6 +30,7 @@ export class AppDataSource {
       //   subscribersDir: 'subscriber',
       // },
       extra: {
+        trustServerCertificate: true,
         max: configService.get<number>('DATABASE_MAX_CONNECTIONS', 100),
         ssl: configService.get<boolean>('DATABASE_SSL_ENABLED', false)
           ? {
