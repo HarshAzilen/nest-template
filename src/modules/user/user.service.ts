@@ -9,6 +9,7 @@ import { UserRepository } from './user.repository';
 import { generateDynamicHtml } from 'src/helpers/dynamicHtmlTemplate';
 import { join } from 'path';
 import { sendEmail } from 'src/helpers/sendEmail';
+import { template } from 'handlebars';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -43,23 +44,20 @@ export class UserService extends CommonService<UserEntity> {
       throw new Error();
     }
   }
-  async emailSend(): Promise<any> {
+  async emailSend(): Promise<void> {
     try {
       const link = `https://outlook.office.com/mail/`;
       const data = { NAME: 'Dipali', LINK: link, EXPIRY: '3h' };
 
-      const html = await generateDynamicHtml(
-        join(__dirname, '../../mails/accountVerificationEmailTemplate.html'),
-        data,
-      );
       // send mail
       const mailParams = {
         subject: 'Account verification',
-        html_content: html,
+        templatePath: join(__dirname, '../../mailTemplate/accountVerificationEmailTemplate.html'),
+        data,
       };
 
       await sendEmail('dipali.rangpariya@azilen.com', mailParams);
-    } catch (error: any) {
+    } catch (error) {
       throw new Error();
     }
   }
