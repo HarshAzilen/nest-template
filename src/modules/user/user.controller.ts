@@ -17,7 +17,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @SerializeOptions({ strategy: 'excludeAll' })
 @Controller('user')
 export class UserController {
@@ -27,6 +27,14 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+
+  @SetResponseMessage('Get all users')
+  @Get('send_email')
+  async emailSend() {
+    console.log('🚀 ~ UserController:');
+
+    return this.userService.emailSend();
   }
 
   @SetResponseMessage('Get all users')

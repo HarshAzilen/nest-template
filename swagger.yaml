@@ -93,6 +93,13 @@ paths:
       responses:
         '200':
           description: ''
+  /user/send_email:
+    get:
+      operationId: UserController_emailSend
+      parameters: []
+      responses:
+        '200':
+          description: ''
   /user/{uuid}:
     get:
       operationId: UserController_findOne

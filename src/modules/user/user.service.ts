@@ -6,6 +6,9 @@ import { CommonService } from '../../common/common.service';
 import { isNull, isUndefined } from '../../utils/validation.util';
 import { compare, hash } from 'bcrypt';
 import { UserRepository } from './user.repository';
+import { generateDynamicHtml } from 'src/helpers/dynamicHtmlTemplate';
+import { join } from 'path';
+import { sendEmail } from 'src/helpers/sendEmail';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -36,6 +39,26 @@ export class UserService extends CommonService<UserEntity> {
   async findAll(): Promise<UserEntity[]> {
     try {
       return await this.userRepository.findAll();
+    } catch (error: any) {
+      throw new Error();
+    }
+  }
+  async emailSend(): Promise<any> {
+    try {
+      const link = `https://outlook.office.com/mail/`;
+      const data = { NAME: 'Dipali', LINK: link, EXPIRY: '3h' };
+
+      const html = await generateDynamicHtml(
+        join(__dirname, '../../mails/accountVerificationEmailTemplate.html'),
+        data,
+      );
+      // send mail
+      const mailParams = {
+        subject: 'Account verification',
+        html_content: html,
+      };
+
+      await sendEmail('dipali.rangpariya@azilen.com', mailParams);
     } catch (error: any) {
       throw new Error();
     }
