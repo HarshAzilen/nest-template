@@ -1,17 +1,17 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  readonly name!: string;
+  @IsOptional()
+  readonly firstName: string;
 
-  @IsEmail()
-  readonly email!: string;
+  @IsOptional()
+  readonly lastName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(7)
-  readonly password!: string;
+  @IsOptional()
+  readonly email: string;
+
+  @IsOptional()
+  readonly password: string;
 }
 
 export interface ICredentials {

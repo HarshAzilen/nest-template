@@ -17,8 +17,6 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 
-@UseGuards(JwtAuthGuard)
-@SerializeOptions({ strategy: 'excludeAll' })
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

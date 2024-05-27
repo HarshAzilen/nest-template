@@ -6,15 +6,16 @@ import {
   Index,
   OneToMany,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import { Expose } from 'class-transformer';
 import { UserEntity } from '../../../modules/user/entities/user.entity';
 
-@Entity('role')
+@Entity('roles')
 export class RoleEntity extends EntityRelationalHelper {
-  @PrimaryColumn('uniqueidentifier', { default: 'NEWID()' })
+  @PrimaryGeneratedColumn('uuid')
   @Index()
   id!: string;
 

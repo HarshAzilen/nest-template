@@ -6,16 +6,18 @@ import {
   UpdateDateColumn,
   Index,
   DeleteDateColumn,
-  PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import { RoleEntity } from '../../../modules/role/entities/role.entity';
+import { VenueEntity } from '../../venue/venue.entity';
 
-@Entity('user')
+@Entity('users')
 export class UserEntity extends EntityRelationalHelper {
-  @PrimaryColumn('uniqueidentifier', { default: 'NEWID()' })
+  @PrimaryGeneratedColumn('uuid')
   @Index()
   id!: string;
 
@@ -76,4 +78,7 @@ export class UserEntity extends EntityRelationalHelper {
   @ManyToOne(() => RoleEntity)
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
   roles: RoleEntity;
+
+  @OneToOne(() => VenueEntity, (venue) => venue.venueOperator)
+  venue: VenueEntity;
 }
