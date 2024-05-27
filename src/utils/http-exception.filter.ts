@@ -17,10 +17,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
       if (typeof exceptionResponse === 'string') {
         errorMessage = exceptionResponse;
       } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-        errorMessage = (exceptionResponse as any).message;
+        errorMessage = (exceptionResponse as any).message || errorMessage;
       }
     } else if (exception instanceof Error) {
-      errorMessage = exception.message;
+      errorMessage = exception.message || errorMessage;
     }
 
     response.status(status).json({
