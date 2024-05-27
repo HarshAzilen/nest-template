@@ -1,15 +1,14 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserEntity } from './entities/user.entity';
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { compare, hash } from 'bcrypt';
+import { join } from 'path';
+import { CommonService } from '../../common/common.service';
+import { sendEmail } from '../../helpers/sendEmail';
+import { isNull, isUndefined } from '../../utils/validation.util';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
-import { CommonService } from '../../common/common.service';
-import { isNull, isUndefined } from '../../utils/validation.util';
-import { compare, hash } from 'bcrypt';
+import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
-import { generateDynamicHtml } from 'src/helpers/dynamicHtmlTemplate';
-import { join } from 'path';
-import { sendEmail } from 'src/helpers/sendEmail';
-import { template } from 'handlebars';
+import { UserMessages } from './constants/user.messages';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -23,7 +22,7 @@ export class UserService extends CommonService<UserEntity> {
         ...createUserDto,
       });
     } catch (error: unknown) {
-      throw new Error();
+      throw error;
     }
   }
 
@@ -50,7 +49,7 @@ export class UserService extends CommonService<UserEntity> {
       // send mail
       const mailParams = {
         subject: 'Account verification',
-        templatePath: join(__dirname, '../../mailTemplate/accountVerificationEmailTemplate.html'),
+        templatePath: join(__dirname, '../../mail/accountVerificationEmailTemplate.html'),
         data,
       };
 

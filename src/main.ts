@@ -1,15 +1,13 @@
 import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ResponseFormatInterceptor } from './utils/response-format.interceptor';
-import { ExceptionFormatFilter } from './utils/exception-format.filter';
-import { DomainExceptionInterceptor } from './utils/domain-exception.filter';
-import * as fs from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as yaml from 'js-yaml';
-import { Logger, LoggerErrorInterceptor, LoggerModule, PinoLogger } from 'nestjs-pino';
+import * as fs from 'fs';
 import helmet from 'helmet';
+import * as yaml from 'js-yaml';
+import { Logger, LoggerErrorInterceptor, PinoLogger } from 'nestjs-pino';
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './utils/http-exception.filter';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { bufferLogs: true, bodyParser: true });
@@ -18,12 +16,9 @@ async function bootstrap(): Promise<void> {
   app.enableCors();
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
-
-  app.useGlobalFilters(new ExceptionFormatFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-  app.useGlobalInterceptors(new ResponseFormatInterceptor(app.get(Reflector)));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useGlobalInterceptors(new DomainExceptionInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const options = new DocumentBuilder()
     .setTitle('API')
