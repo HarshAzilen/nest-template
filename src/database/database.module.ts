@@ -8,9 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+        type: 'mssql',
         host: configService.get<string>('DATABASE_HOST'),
-        port: configService.get<number>('DATABASE_PORT'),
+        port: +configService.get<number>('DATABASE_PORT'),
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
@@ -20,6 +20,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         cli: {
           entitiesDir: 'src',
           migrationsDir: 'src/database/migrations',
+        },
+        extra: {
+          trustServerCertificate: true,
         },
       }),
     }),

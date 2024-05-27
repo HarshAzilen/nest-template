@@ -73,42 +73,30 @@ paths:
       responses:
         '200':
           description: ''
-  /user/{uuid}/posts:
-    get:
-      operationId: UserController_findPosts
-      parameters:
-        - name: uuid
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-  /post:
+  /venueoperator:
     post:
-      operationId: PostController_upload
+      operationId: VenueoperatorController_create
       parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreatePostDto'
+              $ref: '#/components/schemas/CreateVenueoperatorDto'
       responses:
         '201':
           description: ''
     get:
-      operationId: PostController_findAll
+      operationId: VenueoperatorController_findAll
       parameters: []
       responses:
         '200':
           description: ''
-  /post/{uuid}:
+  /venueoperator/{id}:
     get:
-      operationId: PostController_findOne
+      operationId: VenueoperatorController_findOne
       parameters:
-        - name: uuid
+        - name: id
           required: true
           in: path
           schema:
@@ -117,9 +105,9 @@ paths:
         '200':
           description: ''
     patch:
-      operationId: PostController_update
+      operationId: VenueoperatorController_update
       parameters:
-        - name: uuid
+        - name: id
           required: true
           in: path
           schema:
@@ -129,14 +117,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdatePostDto'
+              $ref: '#/components/schemas/UpdateVenueoperatorDto'
       responses:
         '200':
           description: ''
     delete:
-      operationId: PostController_remove
+      operationId: VenueoperatorController_remove
       parameters:
-        - name: uuid
+        - name: id
           required: true
           in: path
           schema:
@@ -164,9 +152,9 @@ components:
     UpdateUserDto:
       type: object
       properties: {}
-    CreatePostDto:
+    CreateVenueoperatorDto:
       type: object
       properties: {}
-    UpdatePostDto:
+    UpdateVenueoperatorDto:
       type: object
       properties: {}
