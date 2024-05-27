@@ -5,11 +5,11 @@ import { emailParams } from 'src/utils/types/email-params.type';
 
 export async function sendEmail(email: string, mailParams: emailParams) {
   const transporter = nodemailer.createTransport({
-    host: 'sandbox.smtp.mailtrap.io',
+    host: process.env.EMAIL_HOST || 'sandbox.smtp.mailtrap.io',
     port: 2525,
     auth: {
-      user: '4738b072e02a7d',
-      pass: '2b162f96ac5700',
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
   const html = await generateDynamicHtml(mailParams.templatePath, mailParams.data);
