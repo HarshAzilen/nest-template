@@ -16,12 +16,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignUpDto'
+              $ref: '#/components/schemas/CreateUserDto'
       responses:
-        '400':
-          description: Something is invalid on the request body
-        '409':
-          description: Email already in use
+        '201':
+          description: ''
       tags: &ref_0
         - Auth
   /api/auth/sign-in:
@@ -36,43 +34,87 @@ paths:
               $ref: '#/components/schemas/SignInDto'
       responses:
         '200':
-          description: Logs in the user and returns the access token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponseMapper'
-        '400':
-          description: Something is invalid on the request body
-        '401':
-          description: Invalid credentials or User is not confirmed
+          description: ''
       tags: *ref_0
   /api/auth/refresh-access:
     post:
       operationId: AuthController_refreshAccess
       parameters: []
       responses:
-        '200':
-          description: Refreshes and returns the access token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponseMapper'
-        '400':
-          description: >-
-            Something is invalid on the request body, or Token is invalid or
-            expired
-        '401':
-          description: Invalid token
+        '201':
+          description: ''
       tags: *ref_0
   /api/auth/logout:
     post:
       operationId: AuthController_logout
       parameters: []
       responses:
-        '400':
-          description: Something is invalid on the request body
-        '401':
-          description: Invalid token
+        '201':
+          description: ''
+      tags: *ref_0
+  /api/auth/confirm-email:
+    post:
+      operationId: AuthController_confirmEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmEmailDto'
+      responses:
+        '201':
+          description: ''
+      tags: *ref_0
+  /api/auth/forgot-password:
+    post:
+      operationId: AuthController_forgotPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailDto'
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+  /api/auth/reset-password:
+    post:
+      operationId: AuthController_resetPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordDto'
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+  /api/auth/update-password:
+    patch:
+      operationId: AuthController_updatePassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDto'
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+  /api/auth/me:
+    get:
+      operationId: AuthController_getMe
+      parameters: []
+      responses:
+        '200':
+          description: ''
       tags: *ref_0
   /user:
     post:
@@ -220,38 +262,13 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
-    SignUpDto:
+    CreateUserDto:
       type: object
-      properties:
-        password1:
-          type: string
-          description: New password
-          minLength: 8
-          maxLength: 35
-        password2:
-          type: string
-          description: Password confirmation
-          minLength: 1
-        name:
-          type: string
-          description: The user name
-          minLength: 3
-          maxLength: 100
-        email:
-          type: string
-          description: The user email
-          example: example@gmail.com
-          minLength: 5
-          maxLength: 255
-      required:
-        - password1
-        - password2
-        - name
-        - email
+      properties: {}
     SignInDto:
       type: object
       properties:
-        emailOrUsername:
+        email:
           type: string
           description: Username or email
           examples:
@@ -264,63 +281,70 @@ components:
           description: User's password
           minLength: 1
       required:
-        - emailOrUsername
-        - password
-    AuthResponseUserMapper:
-      type: object
-      properties:
-        id:
-          type: number
-          description: User id
-          example: 123
-          minimum: 1
-        name:
-          type: string
-          description: User name
-          example: John Doe
-          minLength: 3
-          maxLength: 100
-        username:
-          type: string
-          description: User username
-          example: john.doe1
-          minLength: 3
-          maxLength: 106
-        email:
-          type: string
-          description: User email
-          example: example@gmail.com
-          minLength: 5
-          maxLength: 255
-        createdAt:
-          type: string
-          description: User creation date
-          example: '2021-01-01T00:00:00.000Z'
-        updatedAt:
-          type: string
-          description: User last update date
-          example: '2021-01-01T00:00:00.000Z'
-      required:
-        - id
-        - name
-        - username
         - email
-        - createdAt
-        - updatedAt
-    AuthResponseMapper:
+        - password
+    ConfirmEmailDto:
       type: object
       properties:
-        accessToken:
-          description: User
+        confirmationToken:
+          type: string
+          description: The JWT token sent to the user email
           example: >-
             eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          allOf:
-            - $ref: '#/components/schemas/AuthResponseUserMapper'
       required:
-        - accessToken
-    CreateUserDto:
+        - confirmationToken
+    EmailDto:
       type: object
-      properties: {}
+      properties:
+        email:
+          type: string
+          description: The email of the user
+          example: someone@gmail.com
+          minLength: 5
+          maxLength: 255
+      required:
+        - email
+    ResetPasswordDto:
+      type: object
+      properties:
+        password1:
+          type: string
+          description: New password
+          minLength: 8
+          maxLength: 35
+        password2:
+          type: string
+          description: Password confirmation
+          minLength: 1
+        resetToken:
+          type: string
+          description: The JWT token sent to the user email
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      required:
+        - password1
+        - password2
+        - resetToken
+    ChangePasswordDto:
+      type: object
+      properties:
+        password1:
+          type: string
+          description: New password
+          minLength: 8
+          maxLength: 35
+        password2:
+          type: string
+          description: Password confirmation
+          minLength: 1
+        password:
+          type: string
+          description: The current password
+          minLength: 1
+      required:
+        - password1
+        - password2
+        - password
     UpdateUserDto:
       type: object
       properties: {}

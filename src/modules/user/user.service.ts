@@ -19,10 +19,8 @@ export class UserService extends CommonService<UserEntity> {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const hashedPassword = await hash(createUserDto.password, 10);
       return await this.userRepository.create({
         ...createUserDto,
-        password: hashedPassword,
       });
     } catch (error: unknown) {
       throw new Error();

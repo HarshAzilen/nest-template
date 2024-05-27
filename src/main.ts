@@ -12,7 +12,7 @@ import { Logger, LoggerErrorInterceptor, LoggerModule, PinoLogger } from 'nestjs
 import helmet from 'helmet';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, bodyParser: true });
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.use(helmet());
   app.enableCors();

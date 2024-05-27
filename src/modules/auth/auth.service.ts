@@ -8,7 +8,7 @@ import { TokenTypeEnum } from '../jwt/enums/token-type.enum';
 import { IEmailToken } from '../jwt/interfaces/email-token.interface';
 import { IRefreshToken } from '../jwt/interfaces/refresh-token.interface';
 import { JwtService } from '../jwt/jwt.service';
-import { ICredentials } from '../user/dto/request-user.dto';
+import { CreateUserDto, ICredentials } from '../user/dto/request-user.dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -23,16 +23,30 @@ import { IAuthResult } from './interfaces/auth-result.interface';
 export class AuthService {
   constructor(private readonly userService: UserService, private readonly jwtService: JwtService) {}
 
-  public async signUp(dto: SignUpDto, domain?: string): Promise<string> {
-    const { name, email, password1, password2 } = dto;
-    this.comparePasswords(password1, password2);
-    const user = await this.userService.create({
-      email: email,
-      name: name,
-      password: password1,
-    });
-    return await this.jwtService.generateToken(user, TokenTypeEnum.CONFIRMATION, domain);
+  public async signUp(dto: CreateUserDto): Promise<void> {
+    await this.userService.create(dto);
+    // const { email, firstName, lastName, phoneNo } = dto;
+    // this.comparePasswords(password1, password2);
+    // const user = await this.userService.create({
+    // email: email,
+    // firstName: firstName,
+    // lastName: lastName,
+    // });
+    // const user = await this.userService.create({});
+    // return await this.jwtService.generateToken(user, TokenTypeEnum.CONFIRMATION);
+    // return await this.jwtService.generateToken(user, TokenTypeEnum.);
   }
+
+  // public async signUp(dto: SignUpDto, domain?: string): Promise<string> {
+  //   const { name, email, password1, password2 } = dto;
+  //   this.comparePasswords(password1, password2);
+  //   const user = await this.userService.create({
+  //     email: email,
+  //     name: name,
+  //     password: password1,
+  //   });
+  //   return await this.jwtService.generateToken(user, TokenTypeEnum.CONFIRMATION, domain);
+  // }
 
   public async confirmEmail(dto: ConfirmEmailDto, domain?: string): Promise<IAuthResult> {
     const { confirmationToken } = dto;
@@ -45,10 +59,10 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  public async signIn(dto: SignInDto, domain?: string): Promise<IAuthResult> {
-    const { emailOrUsername, password } = dto;
-    const user = await this.userService.findByEmail(emailOrUsername);
-    await this.userByEmailOrUsername(emailOrUsername);
+  public async signIn(dto: SignInDto): Promise<IAuthResult> {
+    const { email, password } = dto;
+    const user = await this.userService.findOneByEmail(email);
+    await this.userByEmailOrUsername(email);
 
     if (!(await compare(password, user.password))) {
       throw new BadRequestException('wrong password');
@@ -58,15 +72,15 @@ export class AuthService {
     // throw new UnauthorizedException('Please confirm your email, a new email has been sent');
     // }
 
-    const [accessToken, refreshToken] = await this.generateAuthTokens(user, domain);
+    const [accessToken, refreshToken] = await this.generateAuthTokens(user);
     return { accessToken, refreshToken };
   }
 
-  public async refreshTokenAccess(refreshToken: string, domain?: string): Promise<IAuthResult> {
+  public async refreshTokenAccess(refreshToken: string): Promise<IAuthResult> {
     const { id, tokenId } = await this.jwtService.verifyToken<IRefreshToken>(refreshToken, TokenTypeEnum.REFRESH);
     await this.checkIfTokenIsBlacklisted(id, tokenId);
     const user = await this.userService.findOneByCredentials(id);
-    const [accessToken, newRefreshToken] = await this.generateAuthTokens(user, domain, tokenId);
+    const [accessToken, newRefreshToken] = await this.generateAuthTokens(user, tokenId);
     return { accessToken, refreshToken: newRefreshToken };
   }
 
@@ -151,26 +165,20 @@ export class AuthService {
     }
   }
 
-  private async userByEmailOrUsername(emailOrUsername: string): Promise<UserEntity> {
-    if (emailOrUsername.includes('@')) {
-      if (!isEmail(emailOrUsername)) {
+  private async userByEmailOrUsername(email: string): Promise<UserEntity> {
+    if (email.includes('@')) {
+      if (!isEmail(email)) {
         throw new BadRequestException('Invalid email');
       }
 
-      return this.userService.findOneByEmail(emailOrUsername);
+      return this.userService.findOneByEmail(email);
     }
-
-    if (emailOrUsername.length < 3 || emailOrUsername.length > 106 || !SLUG_REGEX.test(emailOrUsername)) {
-      throw new BadRequestException('Invalid username');
-    }
-
-    return this.userService.findByEmail(emailOrUsername);
   }
 
-  private async generateAuthTokens(user: UserEntity, domain?: string, tokenId?: string): Promise<[string, string]> {
+  private async generateAuthTokens(user: UserEntity, tokenId?: string): Promise<[string, string]> {
     return Promise.all([
-      this.jwtService.generateToken(user, TokenTypeEnum.ACCESS, domain, tokenId),
-      this.jwtService.generateToken(user, TokenTypeEnum.REFRESH, domain, tokenId),
+      this.jwtService.generateToken(user, TokenTypeEnum.ACCESS, tokenId),
+      this.jwtService.generateToken(user, TokenTypeEnum.REFRESH, tokenId),
     ]);
   }
 }

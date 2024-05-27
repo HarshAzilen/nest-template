@@ -11,7 +11,7 @@ export abstract class SignInDto {
   })
   @IsString()
   @Length(3, 255)
-  public emailOrUsername: string;
+  public email: string;
 
   @ApiProperty({
     description: "User's password",

@@ -1,22 +1,22 @@
-import { Body, Controller, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  ApiBadRequestResponse,
-  ApiConflictResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Request, Response } from 'express-serve-static-core';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { Origin } from './decorators/origin.decorator';
 import { Public } from './decorators/public.decorator';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { EmailDto } from './dto/email.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { IAuthResult } from './interfaces/auth-result.interface';
-import { AuthResponseMapper } from './mappers/auth-response.mapper';
+import { AuthRoutes } from './constants/auth.routes';
+import { CreateUserDto } from '../user/dto/request-user.dto';
 
 @ApiTags('Auth')
 @Controller('api/auth')
@@ -38,35 +38,23 @@ export class AuthController {
   }
 
   @Public()
-  @Post('/sign-up')
-  @ApiConflictResponse({
-    description: 'Email already in use',
-  })
-  @ApiBadRequestResponse({
-    description: 'Something is invalid on the request body',
-  })
-  public async signUp(@Origin() origin: string | undefined, @Body() signUpDto: SignUpDto): Promise<string> {
-    return await this.authService.signUp(signUpDto, origin);
+  @Post(AuthRoutes.SIGN_UP)
+  @HttpCode(HttpStatus.CREATED)
+  public async signUp(
+    @Body()
+    createUserDto: CreateUserDto,
+  ): Promise<void> {
+    await this.authService.signUp(createUserDto);
   }
 
   @Public()
-  @Post('/sign-in')
-  @ApiOkResponse({
-    type: AuthResponseMapper,
-    description: 'Logs in the user and returns the access token',
-  })
-  @ApiBadRequestResponse({
-    description: 'Something is invalid on the request body',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid credentials or User is not confirmed',
-  })
+  @Post(AuthRoutes.SIGN_IN)
+  @HttpCode(HttpStatus.OK)
   public async signIn(
-    @Res() res: Response,
-    @Origin() origin: string | undefined,
+    // @Res() res: Response,
     @Body() singInDto: SignInDto,
   ): Promise<IAuthResult> {
-    return await this.authService.signIn(singInDto, origin);
+    return await this.authService.signIn(singInDto);
 
     // this.saveRefreshCookie(regenerateTokengenerateTokens, result.refreshToken)
     //   .status(HttpStatus.OK)
@@ -74,31 +62,15 @@ export class AuthController {
   }
 
   @Public()
-  @Post('/refresh-access')
-  @ApiOkResponse({
-    type: AuthResponseMapper,
-    description: 'Refreshes and returns the access token',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid token',
-  })
-  @ApiBadRequestResponse({
-    description: 'Something is invalid on the request body, or Token is invalid or expired',
-  })
+  @Post(AuthRoutes.REFRESH_ACCESS)
   public async refreshAccess(@Req() req: Request, @Res() res: Response): Promise<void> {
     // const token = this.refreshTokenFromReq(req);
     const token = req.body.token;
-    const result = await this.authService.refreshTokenAccess(token, req.headers.origin);
+    const result = await this.authService.refreshTokenAccess(token);
     // this.saveRefreshCookie(res, result.refreshToken).status(HttpStatus.OK).json(AuthResponseMapper.map(result));
   }
 
-  @Post('/logout')
-  @ApiBadRequestResponse({
-    description: 'Something is invalid on the request body',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid token',
-  })
+  @Post(AuthRoutes.LOGOUT)
   public async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     // const token = this.refreshTokenFromReq(req);
     // const message = await this.authService.logout(token);
@@ -106,75 +78,48 @@ export class AuthController {
     // res.clearCookie(this.cookieName, { path: this.cookiePath }).status(HttpStatus.OK).json(message);
   }
 
-  // @Public()
-  // @Post('/confirm-email')
-  // @ApiOkResponse({
-  //   type: AuthResponseMapper,
-  //   description: 'Confirms the user email and returns the access token',
-  // })
-  // @ApiUnauthorizedResponse({
-  //   description: 'Invalid token',
-  // })
-  // @ApiBadRequestResponse({
-  //   description: 'Something is invalid on the request body, or Token is invalid or expired',
-  // })
-  // public async confirmEmail(
-  //   @Origin() origin: string | undefined,
-  //   @Body() confirmEmailDto: ConfirmEmailDto,
-  //   @Res() res: Response,
-  // ): Promise<void> {
-  //   return await this.authService.confirmEmail(confirmEmailDto);
+  @Public()
+  @Post(AuthRoutes.CONFIRM_EMAIL)
+  public async confirmEmail(
+    @Origin() origin: string | undefined,
+    @Body() confirmEmailDto: ConfirmEmailDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.authService.confirmEmail(confirmEmailDto);
 
-  // this.saveRefreshCookie(res, result.refreshToken).status(HttpStatus.OK).json(AuthResponseMapper.map(result));
-  // }
+    // this.saveRefreshCookie(res, result.refreshToken).status(HttpStatus.OK).json(AuthResponseMapper.map(result));
+  }
 
-  // @Public()
-  // @Post('/forgot-password')
-  // @HttpCode(HttpStatus.OK)
-  // public async forgotPassword(@Origin() origin: string | undefined, @Body() emailDto: EmailDto): Promise<IMessage> {
-  //   return this.authService.resetPasswordEmail(emailDto, origin);
-  // }
+  @Public()
+  @Post(AuthRoutes.FORGOT_PASSWORD)
+  @HttpCode(HttpStatus.OK)
+  public async forgotPassword(@Origin() origin: string | undefined, @Body() emailDto: EmailDto): Promise<void> {
+    this.authService.resetPasswordEmail(emailDto, origin);
+  }
 
-  // @Public()
-  // @Post('/reset-password')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiBadRequestResponse({
-  //   description: 'Something is invalid on the request body, or Token is invalid or expired',
-  // })
-  // public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<IMessage> {
-  //   return this.authService.resetPassword(resetPasswordDto);
-  // }
+  @Public()
+  @Post(AuthRoutes.RESET_PASSWORD)
+  @HttpCode(HttpStatus.OK)
+  public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
+    return this.authService.resetPassword(resetPasswordDto);
+  }
 
-  // @Patch('/update-password')
-  // @ApiOkResponse({
-  //   type: AuthResponseMapper,
-  //   description: 'The password has been updated',
-  // })
-  // @ApiUnauthorizedResponse({
-  //   description: 'The user is not logged in.',
-  // })
-  // public async updatePassword(
-  //   @CurrentUser() userId: number,
-  //   @Origin() origin: string | undefined,
-  //   @Body() changePasswordDto: ChangePasswordDto,
-  //   @Res() res: Response,
-  // ): Promise<void> {
-  //   const result = await this.authService.updatePassword(userId, changePasswordDto, origin);
-  //   this.saveRefreshCookie(res, result.refreshToken).status(HttpStatus.OK).json(AuthResponseMapper.map(result));
-  // }
+  @Patch(AuthRoutes.UPDATE_PASSWORD)
+  @HttpCode(HttpStatus.OK)
+  public async updatePassword(
+    @CurrentUser() userId: string,
+    @Origin() origin: string | undefined,
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.authService.updatePassword(userId, changePasswordDto, origin);
+  }
 
-  // @Get('/me')
-  // @ApiOkResponse({
-  //   type: AuthResponseUserMapper,
-  //   description: 'The user is found and returned.',
-  // })
-  // @ApiUnauthorizedResponse({
-  //   description: 'The user is not logged in.',
-  // })
-  // public async getMe(@CurrentUser() id: number): Promise<IAuthResponseUser> {
-  //   const user = await this.userService.findOneById(id);
-  //   return AuthResponseUserMapper.map(user);
-  // }
+  @Get(AuthRoutes.ME)
+  @HttpCode(HttpStatus.OK)
+  public async getMe(@CurrentUser() id: string): Promise<void> {
+    await this.userService.findOneById(id);
+  }
 
   // private refreshTokenFromReq(req: Request): string {
   //   const token: string | undefined = req.signedCookies[this.cookieName];

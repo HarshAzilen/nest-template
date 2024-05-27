@@ -12,12 +12,12 @@ import { IRefreshPayload, IRefreshToken } from './interfaces/refresh-token.inter
 @Injectable()
 export class JwtService {
   private readonly jwtConfig: IJwt;
-  private readonly issuer: string;
+  // private readonly issuer: string;
   private readonly domain: string;
 
   constructor(private readonly configService: ConfigService) {
     this.jwtConfig = this.configService.get<IJwt>('jwt');
-    this.issuer = this.configService.get<string>('id');
+    // this.issuer = this.configService.get<string>('id');
     this.domain = this.configService.get<string>('domain');
   }
 
@@ -65,23 +65,17 @@ export class JwtService {
     }
   }
 
-  public async generateToken(
-    user: UserEntity,
-    tokenType: TokenTypeEnum,
-    domain?: string | null,
-    tokenId?: string,
-  ): Promise<string> {
+  public async generateToken(user: UserEntity, tokenType: TokenTypeEnum, tokenId?: string): Promise<string> {
     const jwtOptions: jwt.SignOptions = {
-      issuer: this.issuer,
+      // issuer: this.issuer,
       subject: user.email,
-      audience: domain ?? this.domain,
       algorithm: 'HS256',
     };
 
     switch (tokenType) {
       case TokenTypeEnum.ACCESS:
         const { privateKey, time: accessTime } = this.jwtConfig.access;
-        JwtService.generateTokenAsync({ id: user.id }, privateKey, {
+        return JwtService.generateTokenAsync({ id: user.id, roleId: user.roleId }, privateKey, {
           ...jwtOptions,
           expiresIn: accessTime,
           algorithm: 'RS256',
@@ -92,6 +86,7 @@ export class JwtService {
           {
             id: user.id,
             tokenId: tokenId ?? v4(),
+            roleId: user.roleId,
           },
           refreshSecret,
           {
@@ -99,13 +94,13 @@ export class JwtService {
             expiresIn: refreshTime,
           },
         );
-      case TokenTypeEnum.CONFIRMATION:
-      case TokenTypeEnum.RESET_PASSWORD:
-        const { secret, time } = this.jwtConfig[tokenType];
-        return JwtService.generateTokenAsync({ id: user.id }, secret, {
-          ...jwtOptions,
-          expiresIn: time,
-        });
+      // case TokenTypeEnum.CONFIRMATION:
+      // case TokenTypeEnum.RESET_PASSWORD:
+      //   const { secret, time } = this.jwtConfig[tokenType];
+      //   return JwtService.generateTokenAsync({ id: user.id }, secret, {
+      //     ...jwtOptions,
+      //     expiresIn: time,
+      //   });
     }
   }
 
@@ -114,7 +109,7 @@ export class JwtService {
     tokenType: TokenTypeEnum,
   ): Promise<T> {
     const jwtOptions: jwt.VerifyOptions = {
-      issuer: this.issuer,
+      // issuer: this.issuer,
       audience: new RegExp(this.domain),
     };
 
