@@ -7,13 +7,73 @@ paths:
       responses:
         '200':
           description: ''
-  /auth/login:
+  /api/auth/sign-up:
     post:
-      operationId: AuthController_login
+      operationId: AuthController_signUp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpDto'
+      responses:
+        '400':
+          description: Something is invalid on the request body
+        '409':
+          description: Email already in use
+      tags: &ref_0
+        - Auth
+  /api/auth/sign-in:
+    post:
+      operationId: AuthController_signIn
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInDto'
+      responses:
+        '200':
+          description: Logs in the user and returns the access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseMapper'
+        '400':
+          description: Something is invalid on the request body
+        '401':
+          description: Invalid credentials or User is not confirmed
+      tags: *ref_0
+  /api/auth/refresh-access:
+    post:
+      operationId: AuthController_refreshAccess
       parameters: []
       responses:
-        '201':
-          description: ''
+        '200':
+          description: Refreshes and returns the access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseMapper'
+        '400':
+          description: >-
+            Something is invalid on the request body, or Token is invalid or
+            expired
+        '401':
+          description: Invalid token
+      tags: *ref_0
+  /api/auth/logout:
+    post:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '400':
+          description: Something is invalid on the request body
+        '401':
+          description: Invalid token
+      tags: *ref_0
   /user:
     post:
       operationId: UserController_create
@@ -132,6 +192,13 @@ paths:
       responses:
         '200':
           description: ''
+  /event/sse:
+    get:
+      operationId: ServerSentEventController_sse
+      parameters: []
+      responses:
+        '200':
+          description: ''
 info:
   title: API
   description: API docs
@@ -146,6 +213,104 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
+    SignUpDto:
+      type: object
+      properties:
+        password1:
+          type: string
+          description: New password
+          minLength: 8
+          maxLength: 35
+        password2:
+          type: string
+          description: Password confirmation
+          minLength: 1
+        name:
+          type: string
+          description: The user name
+          minLength: 3
+          maxLength: 100
+        email:
+          type: string
+          description: The user email
+          example: example@gmail.com
+          minLength: 5
+          maxLength: 255
+      required:
+        - password1
+        - password2
+        - name
+        - email
+    SignInDto:
+      type: object
+      properties:
+        emailOrUsername:
+          type: string
+          description: Username or email
+          examples:
+            - john.doe
+            - john.doe@gmail.com
+          minLength: 3
+          maxLength: 255
+        password:
+          type: string
+          description: User's password
+          minLength: 1
+      required:
+        - emailOrUsername
+        - password
+    AuthResponseUserMapper:
+      type: object
+      properties:
+        id:
+          type: number
+          description: User id
+          example: 123
+          minimum: 1
+        name:
+          type: string
+          description: User name
+          example: John Doe
+          minLength: 3
+          maxLength: 100
+        username:
+          type: string
+          description: User username
+          example: john.doe1
+          minLength: 3
+          maxLength: 106
+        email:
+          type: string
+          description: User email
+          example: example@gmail.com
+          minLength: 5
+          maxLength: 255
+        createdAt:
+          type: string
+          description: User creation date
+          example: '2021-01-01T00:00:00.000Z'
+        updatedAt:
+          type: string
+          description: User last update date
+          example: '2021-01-01T00:00:00.000Z'
+      required:
+        - id
+        - name
+        - username
+        - email
+        - createdAt
+        - updatedAt
+    AuthResponseMapper:
+      type: object
+      properties:
+        accessToken:
+          description: User
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+          allOf:
+            - $ref: '#/components/schemas/AuthResponseUserMapper'
+      required:
+        - accessToken
     CreateUserDto:
       type: object
       properties: {}
