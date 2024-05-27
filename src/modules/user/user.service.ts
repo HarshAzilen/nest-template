@@ -103,6 +103,11 @@ export class UserService extends CommonService<UserEntity> {
     await this.userRepository.update(id, updateUserDto);
   }
 
+  public async findUserWithRole(id: string): Promise<UserEntity> {
+    const user = await this.userRepository.findUserWithRole(id);
+    return user;
+  }
+
   public async findOneById(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ id });
     return user;

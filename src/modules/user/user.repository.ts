@@ -24,6 +24,15 @@ export class UserRepository extends CommonRepository<UserEntity> {
     return await this.userRepository.find();
   }
 
+  async findUserWithRole(id: string): Promise<UserEntity> {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
+      .select(['user.id AS "id"', 'role.role AS "role"'])
+      .where('user.id = :id', { id: id })
+      .getRawOne();
+  }
+
   async update(id: string, payload: Partial<UserEntity>): Promise<UserEntity> {
     const entity = await this.userRepository.findOne({
       where: { id },
