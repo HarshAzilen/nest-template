@@ -135,10 +135,15 @@ paths:
       responses:
         '200':
           description: ''
-  /user/send_email:
+  /user/send_otp/{email}:
     get:
       operationId: UserController_emailSend
-      parameters: []
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''

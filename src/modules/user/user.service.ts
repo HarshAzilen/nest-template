@@ -15,6 +15,7 @@ export class UserService extends CommonService<UserEntity> {
   constructor(private userRepository: UserRepository) {
     super(userRepository);
   }
+  generatedOtps = new Set<string>();
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -41,21 +42,37 @@ export class UserService extends CommonService<UserEntity> {
       throw new Error();
     }
   }
-  async emailSend(): Promise<void> {
-    try {
-      const link = `https://outlook.office.com/mail/`;
-      const data = { NAME: 'Dipali', LINK: link, EXPIRY: '3h' };
+  generateUniqueOtp(): string {
+    let otp: string;
+    do {
+      otp = Math.floor(1000 + Math.random() * 9000).toString(); // Ensure OTP is a string
+    } while (this.generatedOtps.has(otp));
 
-      // send mail
+    this.generatedOtps.add(otp);
+    return otp;
+  }
+  async emailSend(email: string): Promise<UserEntity> {
+    try {
+      const user = await this.userRepository.findOne({ email });
+      if (!user) {
+        throw new BadRequestException('Email not found');
+      }
+      const otp = this.generateUniqueOtp();
+      const updatedUser = await this.userRepository.update(user.id, {
+        otp,
+        otp_expire: new Date(Date.now() + 3 * 60 * 60 * 1000),
+      });
+      const data = { NAME: `${user.firstName} ${user.lastName}`, EMAIL: user.email, LINK: otp, EXPIRY: '3h' };
       const mailParams = {
         subject: 'Account verification',
-        templatePath: join(__dirname, '../../mail/accountVerificationEmailTemplate.html'),
+        templatePath: join(__dirname, '../../mailTemplate/accountVerificationEmailTemplate.html'),
         data,
       };
 
       await sendEmail('dipali.rangpariya@azilen.com', mailParams);
+      return updatedUser;
     } catch (error) {
-      throw new Error();
+      throw error;
     }
   }
 

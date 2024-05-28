@@ -12,6 +12,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { apiResponse } from '../../utils/response-helper';
@@ -19,6 +20,8 @@ import { UserMessages } from './constants/user.messages';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserService } from './user.service';
+import { ApiResponse } from 'src/utils/types/response.type';
+import { UserEntity } from './entities/user.entity';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -34,12 +37,12 @@ export class UserController {
     }
   }
 
-  @Get('send_email')
+  @Get('send_otp/:email')
   @HttpCode(HttpStatus.OK)
-  async emailSend() {
+  async emailSend(@Param('email') email: string): Promise<ApiResponse<UserEntity>> {
     try {
-      await this.userService.emailSend();
-      return apiResponse(HttpStatus.OK, UserMessages.List);
+      await this.userService.emailSend(email);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
     } catch (error) {
       throw error;
     }
