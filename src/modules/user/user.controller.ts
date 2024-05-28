@@ -1,39 +1,58 @@
 import {
-  Controller,
-  Get,
-  Post,
+  BadRequestException,
   Body,
-  Param,
+  Controller,
   Delete,
-  Patch,
-  SerializeOptions,
-  UseGuards,
+  ForbiddenException,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
   NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { SetResponseMessage } from '../../utils/response-format.interceptor';
-import { UserService } from './user.service';
+import { apiResponse } from '../../utils/response-helper';
+import { UserMessages } from './constants/user.messages';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
+import { UserService } from './user.service';
+import { ApiResponse } from 'src/utils/types/response.type';
+import { UserEntity } from './entities/user.entity';
 
+// @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @SetResponseMessage('Create a new user')
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    try {
+      return this.userService.create(createUserDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  @SetResponseMessage('Get all users')
+  @Get('send_otp/:email')
+  @HttpCode(HttpStatus.OK)
+  async emailSend(@Param('email') email: string): Promise<ApiResponse<UserEntity>> {
+    try {
+      await this.userService.emailSend(email);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Get()
   async findAll() {
     return this.userService.findAll();
   }
 
-  @SetResponseMessage('Get user details')
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
     const user = await this.userService.findOne(uuid);
@@ -43,14 +62,6 @@ export class UserController {
     return user;
   }
 
-  @SetResponseMessage('Update user')
-  @Patch(':uuid')
-  async update(@Param('uuid') uuid: string, @Body() updateUserDto: UpdateUserDto) {
-    await this.userService.update(uuid, updateUserDto);
-    return this.findOne(uuid);
-  }
-
-  @SetResponseMessage('Delete user')
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
     return this.userService.remove(uuid);

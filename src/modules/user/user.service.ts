@@ -1,17 +1,21 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserEntity } from './entities/user.entity';
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { compare, hash } from 'bcrypt';
+import { join } from 'path';
+import { CommonService } from '../../common/common.service';
+import { sendEmail } from '../../helpers/sendEmail';
+import { isNull, isUndefined } from '../../utils/validation.util';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
-import { CommonService } from '../../common/common.service';
-import { isNull, isUndefined } from '../../utils/validation.util';
-import { compare, hash } from 'bcrypt';
+import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
+import { UserMessages } from './constants/user.messages';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
   constructor(private userRepository: UserRepository) {
     super(userRepository);
   }
+  generatedOtps = new Set<string>();
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -19,7 +23,7 @@ export class UserService extends CommonService<UserEntity> {
         ...createUserDto,
       });
     } catch (error: unknown) {
-      throw new Error();
+      throw error;
     }
   }
 
@@ -36,6 +40,39 @@ export class UserService extends CommonService<UserEntity> {
       return await this.userRepository.findAll();
     } catch (error: any) {
       throw new Error();
+    }
+  }
+  generateUniqueOtp(): string {
+    let otp: string;
+    do {
+      otp = Math.floor(1000 + Math.random() * 9000).toString(); // Ensure OTP is a string
+    } while (this.generatedOtps.has(otp));
+
+    this.generatedOtps.add(otp);
+    return otp;
+  }
+  async emailSend(email: string): Promise<UserEntity> {
+    try {
+      const user = await this.userRepository.findOne({ email });
+      if (!user) {
+        throw new BadRequestException('Email not found');
+      }
+      const otp = this.generateUniqueOtp();
+      const updatedUser = await this.userRepository.update(user.id, {
+        otp,
+        otp_expire: new Date(Date.now() + 3 * 60 * 60 * 1000),
+      });
+      const data = { NAME: `${user.firstName} ${user.lastName}`, EMAIL: user.email, LINK: otp, EXPIRY: '3h' };
+      const mailParams = {
+        subject: 'Account verification',
+        templatePath: join(__dirname, '../../mailTemplate/accountVerificationEmailTemplate.html'),
+        data,
+      };
+
+      await sendEmail('dipali.rangpariya@azilen.com', mailParams);
+      return updatedUser;
+    } catch (error) {
+      throw error;
     }
   }
 

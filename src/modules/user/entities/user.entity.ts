@@ -15,7 +15,7 @@ import { EntityRelationalHelper } from '../../../utils/relational-entity-helper'
 import { RoleEntity } from '../../../modules/role/entities/role.entity';
 import { VenueEntity } from '../../venue/venue.entity';
 
-@Entity('users')
+@Entity('user')
 export class UserEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   @Index()
@@ -54,7 +54,7 @@ export class UserEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'otp', type: 'varchar', nullable: true })
-  otp!: number;
+  otp!: string;
 
   @Expose()
   @Column({ name: 'otp_expire', nullable: true })
