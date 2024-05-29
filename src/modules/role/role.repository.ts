@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { RoleEntity } from './entities/role.entity';
 import { NullableType } from '../../utils/types/nullable.type';
-import { CommonRepository } from 'src/common/common.repository';
+import { CommonRepository } from '../../common/common.repository';
 import { CreateRoleDto } from './dto/request-role.dto';
 import { EntityCondition } from '../../utils/types/entity-condition.type';
 
