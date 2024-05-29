@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mssql_db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "JamesBond@987456"
+      ACCEPT_EULA: "Y"
+      MSSQL_DATABASE: "dev_db"
+
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+    ports:
+      - "1443:1433"
+    user: "0:0"
+
+volumes:
+  mssql_data:

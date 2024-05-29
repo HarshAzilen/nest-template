@@ -34,24 +34,34 @@ export class UserRepository extends CommonRepository<UserEntity> {
   }
 
   async update(id: string, payload: Partial<UserEntity>): Promise<UserEntity> {
-    const entity = await this.userRepository.findOne({
-      where: { id },
-    });
+    console.log('🚀 ~ UserRepository ~ update ~ payload:', payload);
+    console.log('🚀 ~ UserRepository ~ update ~ id:', id);
+
+    // Find the entity by ID
+    const entity = await this.userRepository.findOne({ where: { id } });
+    console.log('🚀 ~ UserRepository ~ update ~ entity:', entity);
 
     if (!entity) {
-      throw new Error('user not found');
+      throw new Error('User not found');
     }
 
-    return await this.userRepository.save(payload);
+    // Update the entity with the payload
+    Object.assign(entity, payload);
+
+    // Save the updated entity
+    return await this.userRepository.save(entity);
   }
 
   async findOneByEmail(email: string): Promise<NullableType<UserEntity>> {
     return await this.userRepository.findOne({ where: { email: email } });
   }
   async findOne(fields: EntityCondition<UserEntity>): Promise<NullableType<UserEntity>> {
-    return await this.userRepository.findOne({
+    console.log('🚀 ~ UserRepository ~ findOne ~ fields:', fields);
+    const user = await this.userRepository.findOne({
       where: fields as FindOptionsWhere<UserEntity>,
     });
+    console.log('🚀 ~ UserRepository ~ findOne ~ user:', user);
+    return user;
   }
   async delete(id: string): Promise<void> {
     const deleteResult = await this.userRepository.delete(id);

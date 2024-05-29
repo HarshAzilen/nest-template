@@ -54,7 +54,7 @@ export class UserEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'otp', type: 'varchar', nullable: true })
-  otp!: number;
+  otp!: string;
 
   @Expose()
   @Column({ name: 'otp_expire', nullable: true })
