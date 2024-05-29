@@ -15,6 +15,7 @@ import { SubscriptionStatus } from '../constants/subscription-status.enum';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { SocialMediaEntity } from 'src/modules/social-media/entities/social-media.entity';
+import { SubscriptionEntity } from 'src/modules/subscription/entities/subscription.entity';
 
 @Entity('location')
 export class LocationEntity extends EntityRelationalHelper {
@@ -55,7 +56,7 @@ export class LocationEntity extends EntityRelationalHelper {
   location_operator_id!: string;
 
   @Expose()
-  @Column({ name: 'subscription_id', type: 'uuid', nullable: false })
+  @Column({ name: 'subscription_id', type: 'uuid', nullable: true })
   subscription_id!: string;
 
   @CreateDateColumn({
@@ -75,6 +76,10 @@ export class LocationEntity extends EntityRelationalHelper {
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'location_operator_id', referencedColumnName: 'id' })
   location_operator: UserEntity;
+
+  @ManyToOne(() => SubscriptionEntity)
+  @JoinColumn({ name: 'subscription_id', referencedColumnName: 'id' })
+  subscription: SubscriptionEntity;
 
   @OneToOne(() => SocialMediaEntity, { nullable: true })
   @JoinColumn()

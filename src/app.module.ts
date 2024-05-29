@@ -16,6 +16,7 @@ import { UserModule } from './modules/user/user.module';
 import { VenueModule } from './modules/venue/venue.module';
 import { SocialMediaModule } from './modules/social-media/social-media.module';
 import { LocationModule } from './modules/location/location.module';
+import { SubscriptionModule } from './modules/subscription/subscription.module';
 const levels = {
   http: 10,
   debug: 20,
@@ -77,6 +78,7 @@ const levels = {
     VenueModule,
     SocialMediaModule,
     LocationModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
