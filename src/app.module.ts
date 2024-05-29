@@ -14,6 +14,7 @@ import { join } from 'path';
 import { JwtModule } from './modules/jwt/jwt.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
+import { ClientModule } from './modules/client/client.module';
 const levels = {
   http: 10,
   debug: 20,
@@ -73,6 +74,7 @@ const levels = {
     }),
     UserModule,
     RoleModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],

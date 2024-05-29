@@ -13,7 +13,7 @@ import { EntityRelationalHelper } from '../../../utils/relational-entity-helper'
 import { Expose } from 'class-transformer';
 import { UserEntity } from '../../../modules/user/entities/user.entity';
 
-@Entity('roles')
+@Entity('role')
 export class RoleEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   @Index()
@@ -38,6 +38,6 @@ export class RoleEntity extends EntityRelationalHelper {
   })
   deletedAt!: Date;
 
-  @OneToMany(() => UserEntity, (user) => user.roles)
+  @OneToMany(() => UserEntity, (user) => user.role)
   users: UserEntity[];
 }

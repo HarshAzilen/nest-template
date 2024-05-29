@@ -8,6 +8,7 @@ import { TokenTypeEnum } from './enums/token-type.enum';
 import { IAccessPayload, IAccessToken } from './interfaces/access-token.interface';
 import { IEmailPayload, IEmailToken } from './interfaces/email-token.interface';
 import { IRefreshPayload, IRefreshToken } from './interfaces/refresh-token.interface';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class JwtService {
@@ -15,7 +16,7 @@ export class JwtService {
   // private readonly issuer: string;
   private readonly domain: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService, private readonly roleService: RoleService) {
     this.jwtConfig = this.configService.get<IJwt>('jwt');
     // this.issuer = this.configService.get<string>('id');
     this.domain = this.configService.get<string>('domain');
@@ -72,10 +73,12 @@ export class JwtService {
       algorithm: 'HS256',
     };
 
+    const role = await this.roleService.findOneById(user.roleId);
+
     switch (tokenType) {
       case TokenTypeEnum.ACCESS:
         const { privateKey, time: accessTime } = this.jwtConfig.access;
-        return JwtService.generateTokenAsync({ id: user.id, roleId: user.roleId }, privateKey, {
+        return JwtService.generateTokenAsync({ id: user.id, role: role.role }, privateKey, {
           ...jwtOptions,
           expiresIn: accessTime,
           algorithm: 'RS256',
@@ -86,7 +89,7 @@ export class JwtService {
           {
             id: user.id,
             tokenId: tokenId ?? v4(),
-            roleId: user.roleId,
+            role: role.role,
           },
           refreshSecret,
           {

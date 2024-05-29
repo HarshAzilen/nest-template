@@ -13,7 +13,7 @@ import {
 import { EntityRelationalHelper } from '../../utils/relational-entity-helper';
 import { UserEntity } from '../user/entities/user.entity';
 
-@Entity('venues')
+@Entity('venue')
 export class VenueEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   @Index()

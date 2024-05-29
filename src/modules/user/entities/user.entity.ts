@@ -77,7 +77,7 @@ export class UserEntity extends EntityRelationalHelper {
 
   @ManyToOne(() => RoleEntity)
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
-  roles: RoleEntity;
+  role: RoleEntity;
 
   @OneToOne(() => VenueEntity, (venue) => venue.venueOperator)
   venue: VenueEntity;
