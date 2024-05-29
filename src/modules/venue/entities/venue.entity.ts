@@ -1,19 +1,19 @@
 import { Expose } from 'class-transformer';
+import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import {
-  Entity,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  Index,
   DeleteDateColumn,
+  Entity,
+  Index,
   JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
-  OneToOne,
+  UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../utils/relational-entity-helper';
-import { UserEntity } from '../user/entities/user.entity';
+import { UserEntity } from 'src/modules/user/entities/user.entity';
 
-@Entity('venues')
+@Entity('venue')
 export class VenueEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   @Index()
@@ -24,16 +24,20 @@ export class VenueEntity extends EntityRelationalHelper {
   name!: string;
 
   @Expose()
-  @Column({ name: 'description', type: 'varchar', nullable: false })
-  description!: string;
+  @Column({ name: 'description', type: 'varchar', nullable: true })
+  description: string;
 
   @Expose()
-  @Column({ name: 'location', type: 'varchar', nullable: false })
+  @Column({ name: 'location', type: 'varchar', nullable: true })
   location!: string;
 
   @Expose()
-  @Column({ name: 'venue_operator_id', type: 'varchar', nullable: false })
-  venueOperatorId!: string;
+  @Column({ name: 'media', type: 'uuid', nullable: true })
+  media!: string;
+
+  @Expose()
+  @Column({ name: 'venue_operator_id', type: 'uuid', nullable: false })
+  venue_operator_id!: string;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -50,7 +54,7 @@ export class VenueEntity extends EntityRelationalHelper {
   })
   deletedAt!: Date;
 
-  @OneToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'venue_operator_id', referencedColumnName: 'id' })
-  venueOperator: UserEntity;
+  venue_operator: UserEntity;
 }

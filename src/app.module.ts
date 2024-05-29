@@ -6,7 +6,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controllers';
 import { AppService } from './app.service';
-import { VenueoperatorModule } from './modules/venueoperator/venueoperator.module';
 import { CronJobModule } from './modules/cronjob/cronjob.module';
 import { ServerSentEventModule } from './modules/server-sent-event/server-sent-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -14,6 +13,9 @@ import { join } from 'path';
 import { JwtModule } from './modules/jwt/jwt.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
+import { VenueModule } from './modules/venue/venue.module';
+import { LocationModule } from './location/location.module';
+import { SocialMediaModule } from './modules/social-media/social-media.module';
 const levels = {
   http: 10,
   debug: 20,
@@ -65,7 +67,6 @@ const levels = {
     DatabaseModule,
     AuthModule,
     JwtModule,
-    VenueoperatorModule,
     CronJobModule,
     ServerSentEventModule,
     ServeStaticModule.forRoot({
@@ -73,6 +74,9 @@ const levels = {
     }),
     UserModule,
     RoleModule,
+    VenueModule,
+    SocialMediaModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
