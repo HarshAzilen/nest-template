@@ -1,24 +1,23 @@
 import { Expose } from 'class-transformer';
-import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import {
+  Entity,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
+  UpdateDateColumn,
   Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
+  DeleteDateColumn,
   ManyToOne,
+  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
+import { SubscriptionStatus } from '../constants/subscription-status.enum';
+import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { SocialMediaEntity } from 'src/modules/social-media/entities/social-media.entity';
 
-@Entity('venue')
-export class VenueEntity extends EntityRelationalHelper {
+@Entity('location')
+export class LocationEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   @Index()
   id!: string;
@@ -29,11 +28,19 @@ export class VenueEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'description', type: 'varchar', nullable: true })
-  description: string;
+  description!: string;
 
   @Expose()
-  @Column({ name: 'location', type: 'varchar', nullable: true })
-  location!: string;
+  @Column({ name: 'sub_status', type: 'enum', enum: SubscriptionStatus, nullable: true })
+  sub_status!: string;
+
+  @Expose()
+  @Column({ name: 'sub_start_date', nullable: true })
+  sub_start_date: Date;
+
+  @Expose()
+  @Column({ name: 'sub_start_date', nullable: true })
+  sub_end_date: Date;
 
   @Expose()
   @Column({ name: 'media', type: 'uuid', nullable: true })
@@ -42,6 +49,14 @@ export class VenueEntity extends EntityRelationalHelper {
   @Expose()
   @Column({ name: 'venue_operator_id', type: 'uuid', nullable: false })
   venue_operator_id!: string;
+
+  @Expose()
+  @Column({ name: 'location_operator_id', type: 'uuid', nullable: false })
+  location_operator_id!: string;
+
+  @Expose()
+  @Column({ name: 'subscription_id', type: 'uuid', nullable: false })
+  subscription_id!: string;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -53,14 +68,13 @@ export class VenueEntity extends EntityRelationalHelper {
   })
   updatedAt!: Date;
 
-  @DeleteDateColumn({
-    name: 'deleted_at',
-  })
-  deletedAt!: Date;
-
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'venue_operator_id', referencedColumnName: 'id' })
   venue_operator: UserEntity;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'location_operator_id', referencedColumnName: 'id' })
+  location_operator: UserEntity;
 
   @OneToOne(() => SocialMediaEntity, { nullable: true })
   @JoinColumn()

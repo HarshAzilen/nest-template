@@ -4,6 +4,6 @@ import { VenueController } from './venue.controller';
 
 @Module({
   controllers: [VenueController],
-  providers: [VenueService]
+  providers: [VenueService],
 })
 export class VenueModule {}

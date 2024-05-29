@@ -4,6 +4,6 @@ import { SocialMediaController } from './social-media.controller';
 
 @Module({
   controllers: [SocialMediaController],
-  providers: [SocialMediaService]
+  providers: [SocialMediaService],
 })
 export class SocialMediaModule {}
