@@ -16,19 +16,23 @@ export class LocationService extends CommonService<LocationEntity> {
     super(locationRepository);
   }
   async create(createLocationDto: LocationDto): Promise<LocationEntity> {
-    const { location, contact, socialMedia, venue_operator_id } = createLocationDto;
-    const locationOperatorDto = {
-      ...contact,
-      addedBy: venue_operator_id,
-    };
-    const locationOperator = await this.userService.createLocationOperator(locationOperatorDto);
-    const media = await this.socialMediaService.create(socialMedia);
-    const locationDto = {
-      ...location,
-      location_operator_id: locationOperator.id,
-      mediaId: media.id,
-      venue_operator_id,
-    };
-    return this.locationRepository.create(locationDto);
+    try {
+      const { location, contact, socialMedia, venue_operator_id } = createLocationDto;
+      const locationOperatorDto = {
+        ...contact,
+        addedBy: venue_operator_id,
+      };
+      const locationOperator = await this.userService.createLocationOperator(locationOperatorDto);
+      const media = await this.socialMediaService.create(socialMedia);
+      const locationDto = {
+        ...location,
+        location_operator_id: locationOperator.id,
+        mediaId: media.id,
+        venue_operator_id,
+      };
+      return this.locationRepository.create(locationDto);
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 }
