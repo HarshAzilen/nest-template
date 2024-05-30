@@ -13,6 +13,7 @@ import { join } from 'path';
 import { JwtModule } from './modules/jwt/jwt.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
+import { ClientModule } from './modules/client/client.module';
 import { VenueModule } from './modules/venue/venue.module';
 import { SocialMediaModule } from './modules/social-media/social-media.module';
 import { LocationModule } from './modules/location/location.module';
@@ -75,6 +76,7 @@ const levels = {
     }),
     UserModule,
     RoleModule,
+    ClientModule,
     VenueModule,
     SocialMediaModule,
     LocationModule,

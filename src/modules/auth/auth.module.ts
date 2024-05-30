@@ -7,9 +7,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { RoleModule } from '../role/role.module';
 
 @Module({
-  imports: [forwardRef(() => UserModule), JwtModule, ConfigModule, ThrottlerModule.forRoot()],
+  imports: [forwardRef(() => UserModule), JwtModule, ConfigModule, ThrottlerModule.forRoot(), RoleModule],
   controllers: [AuthController],
   providers: [AuthService, JwtService],
   exports: [],
