@@ -34,12 +34,8 @@ export class UserRepository extends CommonRepository<UserEntity> {
   }
 
   async update(id: string, payload: Partial<UserEntity>): Promise<UserEntity> {
-    console.log('🚀 ~ UserRepository ~ update ~ payload:', payload);
-    console.log('🚀 ~ UserRepository ~ update ~ id:', id);
-
     // Find the entity by ID
     const entity = await this.userRepository.findOne({ where: { id } });
-    console.log('🚀 ~ UserRepository ~ update ~ entity:', entity);
 
     if (!entity) {
       throw new Error('User not found');

@@ -1,15 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { LocationService } from './location.service';
-import { CreateLocationDto } from './dto/create-location.dto';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { apiResponse } from '../../utils/response-helper';
+import { LocationMessages } from './constants/location.messages';
+import { LocationRoutes } from './constants/location.routes';
+import { LocationDto } from './dto/request-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { LocationService } from './location.service';
 
-@Controller('location')
+@Controller(LocationRoutes.LOCATION)
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Post()
-  create(@Body() createLocationDto: CreateLocationDto) {
-    return this.locationService.create(createLocationDto);
+  @HttpCode(HttpStatus.OK)
+  async create(@Body() createLocationDto: LocationDto) {
+    try {
+      const location = await this.locationService.create(createLocationDto);
+      return apiResponse(HttpStatus.OK, LocationMessages.CREATE, location);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get()

@@ -4,21 +4,39 @@ import { join } from 'path';
 import { CommonService } from '../../common/common.service';
 import { sendEmail } from '../../helpers/sendEmail';
 import { isNull, isUndefined } from '../../utils/validation.util';
-import { CreateUserDto } from './dto/request-user.dto';
+import { CreateUserDto, LocationOperatorDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
-import { UserMessages } from './constants/user.messages';
+import { RoleRepository } from '../role/role.repository';
+import { ROLE } from '../role/constants/role.enum';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
-  constructor(private userRepository: UserRepository) {
+  constructor(private userRepository: UserRepository, private roleService: RoleService) {
     super(userRepository);
   }
   generatedOtps = new Set<string>();
 
   async create(createUserDto: CreateUserDto) {
     try {
+      return await this.userRepository.create({
+        ...createUserDto,
+      });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+  async createLocationOperator(createUserDto: LocationOperatorDto) {
+    try {
+      const user = await this.userRepository.findOne({ email: createUserDto.email });
+      if (user) {
+        throw new ForbiddenException('User already exists');
+      }
+
+      const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
+      createUserDto.roleId = role.id;
       return await this.userRepository.create({
         ...createUserDto,
       });

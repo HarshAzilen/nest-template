@@ -1,4 +1,4 @@
-export const enum UserMessages {
+export const enum LocationMessages {
   CREATE = 'User added successfully',
   UPDATE = 'User updated successfully',
   GET = 'User retrieved successfully',

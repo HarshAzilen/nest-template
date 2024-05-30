@@ -23,6 +23,10 @@ export class SocialMediaEntity extends EntityRelationalHelper {
   facebook!: string;
 
   @Expose()
+  @Column({ name: 'website', type: 'varchar', nullable: true })
+  website!: string;
+
+  @Expose()
   @Column({ name: 'other', type: 'varchar', nullable: true })
   other: string;
 
