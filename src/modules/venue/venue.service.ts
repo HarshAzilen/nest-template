@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateVenueDto } from './dto/request-venue.dto';
 import { UpdateVenueDto } from './dto/response-venue.dto';
+import { VenueEntity } from './entities/venue.entity';
+import { CommonService } from '../../common/common.service';
+import { VenueRepository } from './venue.repository';
 
 @Injectable()
-export class VenueService {
+export class VenueService extends CommonService<VenueEntity> {
+  constructor(private venueRepository: VenueRepository) {
+    super(venueRepository);
+  }
   create(createVenueDto: CreateVenueDto) {
     return 'This action adds a new venue';
   }
@@ -14,6 +20,13 @@ export class VenueService {
 
   findOne(id: number) {
     return `This action returns a #${id} venue`;
+  }
+
+  public async findOneByVenueName(name: string): Promise<VenueEntity> {
+    const venue = await this.venueRepository.findOne({
+      name: name,
+    });
+    return venue;
   }
 
   update(id: number, updateVenueDto: UpdateVenueDto) {

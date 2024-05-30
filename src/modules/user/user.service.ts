@@ -4,43 +4,118 @@ import { join } from 'path';
 import { CommonService } from '../../common/common.service';
 import { sendEmail } from '../../helpers/sendEmail';
 import { isNull, isUndefined } from '../../utils/validation.util';
-import { CreateUserDto, LocationOperatorDto } from './dto/request-user.dto';
+import { UserMessages } from './constants/user.messages';
+import { CreateUserDto, LocationOperatorDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
+import { VenueService } from '../venue/venue.service';
+import { VenueMessages } from '../venue/constants/venue.messages';
 import { RoleRepository } from '../role/role.repository';
 import { ROLE } from '../role/constants/role.enum';
 import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
-  constructor(private userRepository: UserRepository, private roleService: RoleService) {
+  constructor(
+    private userRepository: UserRepository,
+    private roleService: RoleService,
+    private venueService: VenueService,
+  ) {
     super(userRepository);
   }
   generatedOtps = new Set<string>();
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     try {
-      return await this.userRepository.create({
+      const userExist = await this.userRepository.findOne({
+        email: createUserDto.email,
+      });
+      if (userExist) {
+        throw new BadRequestException(UserMessages.FOUND);
+      }
+
+      const venueExist = await this.venueService.findOneByVenueName(createUserDto.venueName);
+      if (venueExist) {
+        throw new BadRequestException(VenueMessages.FOUND);
+      }
+
+      const venueName = createUserDto.venueName;
+      delete createUserDto.venueName;
+      const user = await this.userRepository.create({
         ...createUserDto,
       });
+      this.venueService.create({ venueOperatorId: user.id, name: venueName });
+      const otp = this.generateUniqueOtp();
+      const updatedUser = await this.userRepository.update(user.id, {
+        otp,
+        otp_expire: new Date(Date.now() + 60 * 60 * 50),
+      });
+      const data = { NAME: `${user.firstName} ${user.lastName}`, EMAIL: user.email, LINK: otp, EXPIRY: '3h' };
+      const mailParams = {
+        subject: 'Account verification',
+        templatePath: join(__dirname, '../../mailTemplate/accountVerificationEmailTemplate.html'),
+        data,
+      };
+
+      await sendEmail('dipali.rangpariya@azilen.com', mailParams);
+      return user;
     } catch (error: unknown) {
       throw error;
     }
   }
+
+  async signIn(createUserDto: CreateUserDto): Promise<UserEntity> {
+    try {
+      const user = await this.userRepository.findOne({
+        email: createUserDto.email,
+      });
+
+      if (!user) {
+        throw new BadRequestException(UserMessages.NOT_FOUND);
+      }
+
+      if (!(await compare(createUserDto.password, user.password))) {
+        throw new BadRequestException(UserMessages.WRONG_PASSWORD);
+      }
+      return user;
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+
+  public async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ id: resetPasswordDto.userId });
+
+    if (!user) {
+      throw new BadRequestException(UserMessages.NOT_FOUND);
+    }
+
+    if (resetPasswordDto.confirmPassword != resetPasswordDto.password) {
+      throw new BadRequestException(UserMessages.NOT_MATCH);
+    }
+
+    user.password = await hash(resetPasswordDto.confirmPassword, 10);
+    await this.update(user.id, user);
+    return user;
+  }
+
+  // public async forgotPassword(email: string): Promise<UserEntity> {
+  //   const user = await this.userRepository.findOne({
+  //     otp: otp,
+  //   });
+  //   this.throwUnauthorizedException(user);
+  //   return user;
+  // }
   async createLocationOperator(createUserDto: LocationOperatorDto) {
-    console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
     try {
       const user = await this.userRepository.findOne({ email: createUserDto.email });
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ user:', user);
       if (user) {
-        throw new ForbiddenException('User already exists');
+        throw new ForbiddenException(UserMessages.FOUND);
       }
 
       const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ role:', role);
       createUserDto.roleId = role.id;
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
 
       return await this.userRepository.create({
         ...createUserDto,
@@ -65,6 +140,23 @@ export class UserService extends CommonService<UserEntity> {
       throw new Error();
     }
   }
+  public async verifyOtp(otpRequestDto: OtpRequestDto): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      id: otpRequestDto.userId,
+    });
+    if (!user) {
+      throw new BadRequestException(UserMessages.NOT_FOUND);
+    }
+    if (user.otp != otpRequestDto.otp) {
+      throw new BadRequestException(UserMessages.OTP_INVALID);
+    }
+    const date = new Date();
+    if (user && date > user.otp_expire) {
+      throw new BadRequestException(UserMessages.OTP_EXPIRED);
+    }
+    return true;
+  }
+
   generateUniqueOtp(): string {
     let otp: string;
     do {
@@ -117,13 +209,13 @@ export class UserService extends CommonService<UserEntity> {
     }
   }
 
-  public async resetPassword(userId: string, password: string): Promise<UserEntity> {
-    const user = await this.findOne(userId);
-    // user.credentials.updatePassword(user.password);
-    user.password = await hash(password, 10);
-    // await this.commonService.saveEntity(this.userRepository, user);
-    return user;
-  }
+  // public async resetPassword(userId: string, password: string): Promise<UserEntity> {
+  //   const user = await this.findOne(userId);
+  //   // user.credentials.updatePassword(user.password);
+  //   user.password = await hash(password, 10);
+  //   // await this.commonService.saveEntity(this.userRepository, user);
+  //   return user;
+  // }
 
   public async uncheckedUserByEmail(email: string): Promise<UserEntity> {
     return this.userRepository.findOne({

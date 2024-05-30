@@ -97,12 +97,12 @@ export class AuthController {
     this.authService.resetPasswordEmail(emailDto, origin);
   }
 
-  @Public()
-  @Post(AuthRoutes.RESET_PASSWORD)
-  @HttpCode(HttpStatus.OK)
-  public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
-    return this.authService.resetPassword(resetPasswordDto);
-  }
+  // @Public()
+  // @Post(AuthRoutes.RESET_PASSWORD)
+  // @HttpCode(HttpStatus.OK)
+  // public async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
+  //   return this.authService.resetPassword(resetPasswordDto);
+  // }
 
   @Patch(AuthRoutes.UPDATE_PASSWORD)
   @HttpCode(HttpStatus.OK)

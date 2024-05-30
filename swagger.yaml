@@ -80,20 +80,6 @@ paths:
         '200':
           description: ''
       tags: *ref_0
-  /api/auth/reset-password:
-    post:
-      operationId: AuthController_resetPassword
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResetPasswordDto'
-      responses:
-        '200':
-          description: ''
-      tags: *ref_0
   /api/auth/update-password:
     patch:
       operationId: AuthController_updatePassword
@@ -116,9 +102,9 @@ paths:
         '200':
           description: ''
       tags: *ref_0
-  /user:
+  /user/sign-up:
     post:
-      operationId: UserController_create
+      operationId: UserController_signUp
       parameters: []
       requestBody:
         required: true
@@ -129,13 +115,46 @@ paths:
       responses:
         '201':
           description: ''
-    get:
-      operationId: UserController_findAll
+  /user/sign-in:
+    post:
+      operationId: UserController_signIn
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: ''
+  /user/verify-otp:
+    post:
+      operationId: UserController_verifyOtp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequestDto'
+      responses:
+        '201':
+          description: ''
+  /user/reset-password:
+    put:
+      operationId: UserController_resetPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordDto'
       responses:
         '200':
           description: ''
-  /user/send_otp/{email}:
+  /user/send-otp/{email}:
     get:
       operationId: UserController_emailSend
       parameters:
@@ -144,6 +163,13 @@ paths:
           in: path
           schema:
             type: string
+      responses:
+        '200':
+          description: ''
+  /user:
+    get:
+      operationId: UserController_findAll
+      parameters: []
       responses:
         '200':
           description: ''
@@ -167,13 +193,6 @@ paths:
           in: path
           schema:
             type: string
-      responses:
-        '200':
-          description: ''
-  /event/sse:
-    get:
-      operationId: ServerSentEventController_sse
-      parameters: []
       responses:
         '200':
           description: ''
@@ -233,6 +252,13 @@ paths:
           in: path
           schema:
             type: string
+      responses:
+        '200':
+          description: ''
+  /event/sse:
+    get:
+      operationId: ServerSentEventController_sse
+      parameters: []
       responses:
         '200':
           description: ''
@@ -342,27 +368,6 @@ components:
           maxLength: 255
       required:
         - email
-    ResetPasswordDto:
-      type: object
-      properties:
-        password1:
-          type: string
-          description: New password
-          minLength: 8
-          maxLength: 35
-        password2:
-          type: string
-          description: Password confirmation
-          minLength: 1
-        resetToken:
-          type: string
-          description: The JWT token sent to the user email
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-      required:
-        - password1
-        - password2
-        - resetToken
     ChangePasswordDto:
       type: object
       properties:
@@ -383,6 +388,12 @@ components:
         - password1
         - password2
         - password
+    OtpRequestDto:
+      type: object
+      properties: {}
+    ResetPasswordDto:
+      type: object
+      properties: {}
     CreateVenueDto:
       type: object
       properties: {}

@@ -1,9 +1,10 @@
-export const enum UserMessages {
-  CREATE = 'User added successfully',
-  UPDATE = 'User updated successfully',
-  GET = 'User retrieved successfully',
-  List = 'User list retrieved successfully',
+export const enum VenueMessages {
+  CREATE = 'Venue added successfully',
+  UPDATE = 'Venue updated successfully',
+  GET = 'Venue retrieved successfully',
+  List = 'Venue list retrieved successfully',
   EMAIL = 'Email sent Successfully',
-  DELETE = 'User deleted successfully',
-  NOT_FOUND = 'User does not exists!',
+  DELETE = 'Venue deleted successfully',
+  NOT_FOUND = 'Venue does not exists!',
+  FOUND = 'Venue with same name already exists!',
 }
