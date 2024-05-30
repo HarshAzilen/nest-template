@@ -52,11 +52,9 @@ export class UserRepository extends CommonRepository<UserEntity> {
     return await this.userRepository.findOne({ where: { email: email } });
   }
   async findOne(fields: EntityCondition<UserEntity>): Promise<NullableType<UserEntity>> {
-    console.log('🚀 ~ UserRepository ~ findOne ~ fields:', fields);
     const user = await this.userRepository.findOne({
       where: fields as FindOptionsWhere<UserEntity>,
     });
-    console.log('🚀 ~ UserRepository ~ findOne ~ user:', user);
     return user;
   }
   async delete(id: string): Promise<void> {

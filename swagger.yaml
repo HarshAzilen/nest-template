@@ -262,66 +262,6 @@ paths:
       responses:
         '200':
           description: ''
-  /client/register:
-    post:
-      operationId: ClientController_create
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateClientDto'
-      responses:
-        '201':
-          description: ''
-  /client:
-    get:
-      operationId: ClientController_findAll
-      parameters: []
-      responses:
-        '200':
-          description: ''
-  /client/{uuid}:
-    get:
-      operationId: ClientController_findOne
-      parameters:
-        - name: uuid
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-    patch:
-      operationId: ClientController_update
-      parameters:
-        - name: uuid
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateClientDto'
-      responses:
-        '200':
-          description: ''
-    delete:
-      operationId: ClientController_remove
-      parameters:
-        - name: uuid
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
   /social-media:
     post:
       operationId: SocialMediaController_create
@@ -345,6 +285,30 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LocationDto'
+      responses:
+        '200':
+          description: ''
+  /location/venue/{venueOperatorId}:
+    get:
+      operationId: LocationController_get
+      parameters:
+        - name: venueOperatorId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /location/{id}:
+    get:
+      operationId: LocationController_getById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -434,12 +398,6 @@ components:
       type: object
       properties: {}
     UpdateVenueDto:
-      type: object
-      properties: {}
-    CreateClientDto:
-      type: object
-      properties: {}
-    UpdateClientDto:
       type: object
       properties: {}
     CreateSocialMediaDto:
