@@ -13,7 +13,6 @@ import {
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import { RoleEntity } from '../../../modules/role/entities/role.entity';
-import { VenueEntity } from '../../venue/venue.entity';
 
 @Entity('user')
 export class UserEntity extends EntityRelationalHelper {
@@ -77,8 +76,5 @@ export class UserEntity extends EntityRelationalHelper {
 
   @ManyToOne(() => RoleEntity)
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
-  role: RoleEntity;
-
-  @OneToOne(() => VenueEntity, (venue) => venue.venueOperator)
-  venue: VenueEntity;
+  roles: RoleEntity;
 }
