@@ -1,20 +1,27 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { join } from 'path';
 import { CommonService } from '../../common/common.service';
 import { sendEmail } from '../../helpers/sendEmail';
 import { isNull, isUndefined } from '../../utils/validation.util';
 import { UserMessages } from './constants/user.messages';
-import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
+import { CreateUserDto, LocationOperatorDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 import { VenueService } from '../venue/venue.service';
 import { VenueMessages } from '../venue/constants/venue.messages';
+import { RoleRepository } from '../role/role.repository';
+import { ROLE } from '../role/constants/role.enum';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
-  constructor(private userRepository: UserRepository, private venueService: VenueService) {
+  constructor(
+    private userRepository: UserRepository,
+    private roleService: RoleService,
+    private venueService: VenueService,
+  ) {
     super(userRepository);
   }
   generatedOtps = new Set<string>();
@@ -87,6 +94,27 @@ export class UserService extends CommonService<UserEntity> {
   //   this.throwUnauthorizedException(user);
   //   return user;
   // }
+  async createLocationOperator(createUserDto: LocationOperatorDto) {
+    console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
+    try {
+      const user = await this.userRepository.findOne({ email: createUserDto.email });
+      console.log('🚀 ~ UserService ~ createLocationOperator ~ user:', user);
+      if (user) {
+        throw new ForbiddenException(UserMessages.FOUND);
+      }
+
+      const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
+      console.log('🚀 ~ UserService ~ createLocationOperator ~ role:', role);
+      createUserDto.roleId = role.id;
+      console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
+
+      return await this.userRepository.create({
+        ...createUserDto,
+      });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
 
   public async findOneByEmail(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({

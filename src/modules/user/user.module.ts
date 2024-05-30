@@ -6,10 +6,11 @@ import { UserController } from './user.controller';
 import { UserEntity } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { UserRepository } from './user.repository';
+import { RoleModule } from '../role/role.module';
 import { VenueModule } from '../venue/venue.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), forwardRef(() => AuthModule), VenueModule],
+  imports: [TypeOrmModule.forFeature([UserEntity]), forwardRef(() => AuthModule), RoleModule, VenueModule],
   controllers: [UserController],
   providers: [UserService, UserRepository],
   exports: [UserService],

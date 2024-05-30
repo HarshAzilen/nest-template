@@ -14,9 +14,9 @@ import {
 import { ApiResponse } from '../../utils/types/response.type';
 import { apiResponse } from '../../utils/response-helper';
 import { UserMessages } from './constants/user.messages';
+import { UserService } from './user.service';
 import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { UserService } from './user.service';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('user')

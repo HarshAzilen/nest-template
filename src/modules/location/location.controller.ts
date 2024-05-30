@@ -1,34 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, UsePipes, ValidationPipe } from '@nestjs/common';
+import { apiResponse } from '../../utils/response-helper';
+import { LocationMessages } from './constants/location.messages';
+import { LocationRoutes } from './constants/location.routes';
+import { LocationDto } from './dto/request-location.dto';
 import { LocationService } from './location.service';
-import { CreateLocationDto } from './dto/create-location.dto';
-import { UpdateLocationDto } from './dto/update-location.dto';
+import { LocationEntity } from './entities/location.entity';
+import { ApiResponse } from 'src/utils/types/response.type';
 
-@Controller('location')
+@Controller(LocationRoutes.LOCATION)
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Post()
-  create(@Body() createLocationDto: CreateLocationDto) {
-    return this.locationService.create(createLocationDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.locationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.locationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLocationDto: UpdateLocationDto) {
-    return this.locationService.update(+id, updateLocationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.locationService.remove(+id);
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe())
+  async create(@Body() body: LocationDto): Promise<ApiResponse<LocationEntity>> {
+    try {
+      const location = await this.locationService.create(body);
+      return apiResponse(HttpStatus.OK, LocationMessages.CREATE, location);
+    } catch (error) {
+      throw error;
+    }
   }
 }
