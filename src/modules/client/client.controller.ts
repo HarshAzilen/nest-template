@@ -10,7 +10,6 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { SetResponseMessage } from '../../utils/response-format.interceptor';
 import { oauthServer } from '../oauth-server/oauth-server';
 import { ClientService } from './client.service';
 import { CreateClientDto, UpdateClientDto } from './dto/request-client.dto';
@@ -35,7 +34,6 @@ export class ClientController {
   //   }
   // }
 
-  @SetResponseMessage('Create a new client')
   @Post('register')
   async create(@Body() createClientDto: CreateClientDto) {
     try {
@@ -45,13 +43,11 @@ export class ClientController {
     }
   }
 
-  @SetResponseMessage('Get all clients')
   @Get()
   async findAll() {
     return this.clientService.findAll();
   }
 
-  @SetResponseMessage('Get client details')
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
     const client = await this.clientService.findOne(uuid);
@@ -61,14 +57,12 @@ export class ClientController {
     return client;
   }
 
-  @SetResponseMessage('Update client')
   @Patch(':uuid')
   async update(@Param('uuid') uuid: string, @Body() updateClientDto: UpdateClientDto) {
     await this.clientService.update(uuid, updateClientDto);
     return this.findOne(uuid);
   }
 
-  @SetResponseMessage('Delete client')
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string) {
     return this.clientService.remove(uuid);

@@ -51,6 +51,6 @@ export abstract class SignUpDto extends PasswordsDto {
     example: '+919876543210',
     type: Number,
   })
-  @IsNumber()
-  public phoneNo!: number;
+  @IsString()
+  public phoneNo!: string;
 }

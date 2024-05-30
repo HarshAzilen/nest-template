@@ -170,65 +170,6 @@ paths:
       responses:
         '200':
           description: ''
-  /venueoperator:
-    post:
-      operationId: VenueoperatorController_create
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateVenueoperatorDto'
-      responses:
-        '201':
-          description: ''
-    get:
-      operationId: VenueoperatorController_findAll
-      parameters: []
-      responses:
-        '200':
-          description: ''
-  /venueoperator/{id}:
-    get:
-      operationId: VenueoperatorController_findOne
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-    patch:
-      operationId: VenueoperatorController_update
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateVenueoperatorDto'
-      responses:
-        '200':
-          description: ''
-    delete:
-      operationId: VenueoperatorController_remove
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
   /event/sse:
     get:
       operationId: ServerSentEventController_sse
@@ -293,6 +234,91 @@ paths:
           in: path
           schema:
             type: string
+      responses:
+        '200':
+          description: ''
+  /venue:
+    post:
+      operationId: VenueController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVenueDto'
+      responses:
+        '201':
+          description: ''
+    get:
+      operationId: VenueController_findAll
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /venue/{id}:
+    get:
+      operationId: VenueController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+    patch:
+      operationId: VenueController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVenueDto'
+      responses:
+        '200':
+          description: ''
+    delete:
+      operationId: VenueController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /social-media:
+    post:
+      operationId: SocialMediaController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSocialMediaDto'
+      responses:
+        '201':
+          description: ''
+  /location:
+    post:
+      operationId: LocationController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationDto'
       responses:
         '200':
           description: ''
@@ -393,15 +419,21 @@ components:
         - password1
         - password2
         - password
-    CreateVenueoperatorDto:
-      type: object
-      properties: {}
-    UpdateVenueoperatorDto:
-      type: object
-      properties: {}
     CreateClientDto:
       type: object
       properties: {}
     UpdateClientDto:
+      type: object
+      properties: {}
+    CreateVenueDto:
+      type: object
+      properties: {}
+    UpdateVenueDto:
+      type: object
+      properties: {}
+    CreateSocialMediaDto:
+      type: object
+      properties: {}
+    LocationDto:
       type: object
       properties: {}

@@ -9,7 +9,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { SocialMediaEntity } from '../../../modules/social-media/entities/social-media.entity';
 import { UserEntity } from '../../../modules/user/entities/user.entity';

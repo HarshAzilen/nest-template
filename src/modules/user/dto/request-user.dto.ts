@@ -30,10 +30,12 @@ export class LocationOperatorDto {
   email: string;
 
   @IsOptional()
-  phoneNo: number;
+  phoneNo: string;
 
   @IsOptional()
   roleId?: string;
+  @IsNotEmpty()
+  addedBy: string;
 }
 
 export interface ICredentials {
