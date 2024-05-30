@@ -1,43 +1,79 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   NotFoundException,
   Param,
-  Patch,
   Post,
-  Query,
+  Put,
 } from '@nestjs/common';
 
+import { ApiResponse } from '../../utils/types/response.type';
 import { apiResponse } from '../../utils/response-helper';
 import { UserMessages } from './constants/user.messages';
-import { CreateUserDto } from './dto/request-user.dto';
-import { UpdateUserDto } from './dto/response-user.dto';
-import { UserService } from './user.service';
-import { ApiResponse } from 'src/utils/types/response.type';
+import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserService } from './user.service';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  @Post('sign-up')
+  async signUp(@Body() createUserDto: CreateUserDto) {
     try {
-      return this.userService.create(createUserDto);
+      await this.userService.create(createUserDto);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
     } catch (error) {
       throw error;
     }
   }
 
-  @Get('send_otp/:email')
+  @Post('sign-in')
+  async signIn(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<UserEntity>> {
+    try {
+      const user = await this.userService.signIn(createUserDto);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('verify-otp')
+  async verifyOtp(@Body() otpRequestDto: OtpRequestDto): Promise<ApiResponse<UserEntity>> {
+    try {
+      await this.userService.verifyOtp(otpRequestDto);
+      return apiResponse(HttpStatus.OK, UserMessages.OTP_VERIFIED);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Put('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ApiResponse<UserEntity>> {
+    try {
+      await this.userService.resetPassword(resetPasswordDto);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // @Post('forgot-password')
+  // async forgotPassword(@Body('email') email: string): Promise<ApiResponse<UserEntity>> {
+  //   try {
+  //     await this.userService.resetPassword(email);
+  //     return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  @Get('send-otp/:email')
   @HttpCode(HttpStatus.OK)
   async emailSend(@Param('email') email: string): Promise<ApiResponse<UserEntity>> {
     try {

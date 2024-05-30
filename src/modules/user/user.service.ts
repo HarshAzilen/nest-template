@@ -1,14 +1,14 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { join } from 'path';
 import { CommonService } from '../../common/common.service';
 import { sendEmail } from '../../helpers/sendEmail';
 import { isNull, isUndefined } from '../../utils/validation.util';
-import { CreateUserDto } from './dto/request-user.dto';
+import { UserMessages } from './constants/user.messages';
+import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
-import { UserMessages } from './constants/user.messages';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -27,6 +27,48 @@ export class UserService extends CommonService<UserEntity> {
     }
   }
 
+  async signIn(createUserDto: CreateUserDto): Promise<UserEntity> {
+    try {
+      const user = await this.userRepository.findOne({
+        email: createUserDto.email,
+      });
+
+      if (!user) {
+        throw new BadRequestException(UserMessages.NOT_FOUND);
+      }
+
+      if (!(await compare(createUserDto.password, user.password))) {
+        throw new BadRequestException(UserMessages.WRONG_PASSWORD);
+      }
+      return user;
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+
+  public async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ id: resetPasswordDto.userId });
+
+    if (!user) {
+      throw new BadRequestException(UserMessages.NOT_FOUND);
+    }
+    if (resetPasswordDto.confirmPassword != resetPasswordDto.password) {
+      throw new BadRequestException(UserMessages.NOT_MATCH);
+    }
+
+    user.password = await hash(resetPasswordDto.confirmPassword, 10);
+    await this.update(user.id, user);
+    return user;
+  }
+
+  // public async forgotPassword(email: string): Promise<UserEntity> {
+  //   const user = await this.userRepository.findOne({
+  //     otp: otp,
+  //   });
+  //   this.throwUnauthorizedException(user);
+  //   return user;
+  // }
+
   public async findOneByEmail(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       email: email.toLowerCase(),
@@ -42,6 +84,23 @@ export class UserService extends CommonService<UserEntity> {
       throw new Error();
     }
   }
+  public async verifyOtp(otpRequestDto: OtpRequestDto): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      id: otpRequestDto.userId,
+    });
+    if (!user) {
+      throw new BadRequestException(UserMessages.NOT_FOUND);
+    }
+    if (user.otp != otpRequestDto.otp) {
+      throw new BadRequestException(UserMessages.OTP_INVALID);
+    }
+    const date = new Date();
+    if (user && date > user.otp_expire) {
+      throw new BadRequestException(UserMessages.OTP_EXPIRED);
+    }
+    return true;
+  }
+
   generateUniqueOtp(): string {
     let otp: string;
     do {
@@ -94,13 +153,13 @@ export class UserService extends CommonService<UserEntity> {
     }
   }
 
-  public async resetPassword(userId: string, password: string): Promise<UserEntity> {
-    const user = await this.findOne(userId);
-    // user.credentials.updatePassword(user.password);
-    user.password = await hash(password, 10);
-    // await this.commonService.saveEntity(this.userRepository, user);
-    return user;
-  }
+  // public async resetPassword(userId: string, password: string): Promise<UserEntity> {
+  //   const user = await this.findOne(userId);
+  //   // user.credentials.updatePassword(user.password);
+  //   user.password = await hash(password, 10);
+  //   // await this.commonService.saveEntity(this.userRepository, user);
+  //   return user;
+  // }
 
   public async uncheckedUserByEmail(email: string): Promise<UserEntity> {
     return this.userRepository.findOne({

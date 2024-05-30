@@ -14,6 +14,29 @@ export class CreateUserDto {
   readonly password: string;
 }
 
+export class ResetPasswordDto {
+  @IsOptional()
+  readonly password: string;
+
+  @IsOptional()
+  readonly confirmPassword: string;
+
+  @IsOptional()
+  readonly userId: string;
+}
+
+export class forgotPasswordDto {
+  @IsOptional()
+  readonly email: string;
+}
+
+export class OtpRequestDto {
+  @IsOptional()
+  readonly otp: string;
+
+  @IsOptional()
+  readonly userId: string;
+}
 export interface ICredentials {
   version: number;
   lastPassword: string;
