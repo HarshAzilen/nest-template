@@ -12,6 +12,9 @@ export class CreateUserDto {
 
   @IsOptional()
   readonly password: string;
+
+  @IsOptional()
+  venueName: string;
 }
 
 export class ResetPasswordDto {

@@ -9,6 +9,9 @@ export const enum UserMessages {
   OTP_INVALID = 'Invalid Otp',
   DELETE = 'User deleted successfully',
   WRONG_PASSWORD = 'Invalid Credentials',
+  REGISTERED = 'You have registered successfully',
+  RESET_PASSWORD = 'Reset password successfully',
   NOT_FOUND = 'User does not exists!',
+  FOUND = 'User already exists!',
   NOT_MATCH = 'Password does not match!',
 }

@@ -56,22 +56,18 @@ export class UserController {
   @Put('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ApiResponse<UserEntity>> {
     try {
-      await this.userService.resetPassword(resetPasswordDto);
-      return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
+      const user = await this.userService.resetPassword(resetPasswordDto);
+      let message: string;
+      if (user.isVerified === false) {
+        message = UserMessages.REGISTERED;
+      } else {
+        message = UserMessages.RESET_PASSWORD;
+      }
+      return apiResponse(HttpStatus.OK, message);
     } catch (error) {
       throw error;
     }
   }
-
-  // @Post('forgot-password')
-  // async forgotPassword(@Body('email') email: string): Promise<ApiResponse<UserEntity>> {
-  //   try {
-  //     await this.userService.resetPassword(email);
-  //     return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 
   @Get('send-otp/:email')
   @HttpCode(HttpStatus.OK)

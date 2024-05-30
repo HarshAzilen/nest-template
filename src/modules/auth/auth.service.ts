@@ -97,12 +97,12 @@ export class AuthService {
     }
   }
 
-  public async resetPassword(dto: ResetPasswordDto): Promise<void> {
-    const { password1, password2, resetToken } = dto;
-    const { id, version } = await this.jwtService.verifyToken<IEmailToken>(resetToken, TokenTypeEnum.RESET_PASSWORD);
-    this.comparePasswords(password1, password2);
-    await this.userService.resetPassword(id, password1);
-  }
+  // public async resetPassword(dto: ResetPasswordDto): Promise<void> {
+  //   const { password1, password2, resetToken } = dto;
+  //   const { id, version } = await this.jwtService.verifyToken<IEmailToken>(resetToken, TokenTypeEnum.RESET_PASSWORD);
+  //   this.comparePasswords(password1, password2);
+  //   await this.userService.resetPassword(id, password1);
+  // }
 
   public async updatePassword(userId: string, dto: ChangePasswordDto, domain?: string): Promise<IAuthResult> {
     const { password1, password2, password } = dto;

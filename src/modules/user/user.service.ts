@@ -9,19 +9,37 @@ import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-us
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
+import { VenueService } from '../venue/venue.service';
+import { VenueMessages } from '../venue/constants/venue.messages';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
-  constructor(private userRepository: UserRepository) {
+  constructor(private userRepository: UserRepository, private venueService: VenueService) {
     super(userRepository);
   }
   generatedOtps = new Set<string>();
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     try {
-      return await this.userRepository.create({
+      const userExist = await this.userRepository.findOne({
+        email: createUserDto.email,
+      });
+      if (userExist) {
+        throw new BadRequestException(UserMessages.FOUND);
+      }
+
+      const venueExist = await this.venueService.findOneByVenueName(createUserDto.venueName);
+      if (venueExist) {
+        throw new BadRequestException(VenueMessages.FOUND);
+      }
+
+      const venueName = createUserDto.venueName;
+      delete createUserDto.venueName;
+      const user = await this.userRepository.create({
         ...createUserDto,
       });
+      this.venueService.create({ venueOperatorId: user.id, name: venueName });
+      return user;
     } catch (error: unknown) {
       throw error;
     }
@@ -52,6 +70,7 @@ export class UserService extends CommonService<UserEntity> {
     if (!user) {
       throw new BadRequestException(UserMessages.NOT_FOUND);
     }
+
     if (resetPasswordDto.confirmPassword != resetPasswordDto.password) {
       throw new BadRequestException(UserMessages.NOT_MATCH);
     }

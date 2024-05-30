@@ -38,6 +38,6 @@ export class RoleEntity extends EntityRelationalHelper {
   })
   deletedAt!: Date;
 
-  @OneToMany(() => UserEntity, (user) => user.role)
+  @OneToMany(() => UserEntity, (user) => user.roles)
   users: UserEntity[];
 }

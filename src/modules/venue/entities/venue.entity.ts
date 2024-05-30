@@ -1,5 +1,6 @@
 import { Expose } from 'class-transformer';
-import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
+import { SocialMediaEntity } from '../../../modules/social-media/entities/social-media.entity';
+import { UserEntity } from '../../../modules/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,15 +8,12 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
-import { SocialMediaEntity } from 'src/modules/social-media/entities/social-media.entity';
+import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 
 @Entity('venue')
 export class VenueEntity extends EntityRelationalHelper {
@@ -41,7 +39,7 @@ export class VenueEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'venue_operator_id', type: 'uuid', nullable: false })
-  venue_operator_id!: string;
+  venueOperatorId!: string;
 
   @CreateDateColumn({
     name: 'created_at',

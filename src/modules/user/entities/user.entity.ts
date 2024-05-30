@@ -1,18 +1,17 @@
 import { Expose } from 'class-transformer';
 import {
-  Entity,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  Index,
   DeleteDateColumn,
-  ManyToOne,
+  Entity,
+  Index,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import { RoleEntity } from '../../../modules/role/entities/role.entity';
+import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 
 @Entity('user')
 export class UserEntity extends EntityRelationalHelper {
@@ -42,6 +41,10 @@ export class UserEntity extends EntityRelationalHelper {
   @Expose()
   @Column({ name: 'role_id', type: 'uuid', nullable: true })
   roleId!: string;
+
+  @Expose()
+  @Column({ name: 'is_verified', type: 'bit', default: false })
+  isVerified!: boolean;
 
   @Expose()
   @Column({ name: 'added_by', type: 'uuid', nullable: true })
