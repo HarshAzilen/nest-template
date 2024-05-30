@@ -76,7 +76,7 @@ const levels = {
     }),
     UserModule,
     RoleModule,
-    ClientModule,
+    // ClientModule,
     VenueModule,
     SocialMediaModule,
     LocationModule,

@@ -1,4 +1,15 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { apiResponse } from '../../utils/response-helper';
 import { LocationMessages } from './constants/location.messages';
 import { LocationRoutes } from './constants/location.routes';
@@ -18,6 +29,28 @@ export class LocationController {
     try {
       const location = await this.locationService.create(body);
       return apiResponse(HttpStatus.OK, LocationMessages.CREATE, location);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get(LocationRoutes.VENUE_OPERATOR_ID)
+  @HttpCode(HttpStatus.OK)
+  async get(@Param('venueOperatorId') venueOperatorId: string): Promise<ApiResponse<LocationEntity[]>> {
+    try {
+      const location = await this.locationService.get(venueOperatorId);
+      return apiResponse(HttpStatus.OK, LocationMessages.GET, location);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get(LocationRoutes.ID)
+  @HttpCode(HttpStatus.OK)
+  async getById(@Param('id') id: string): Promise<ApiResponse<LocationEntity>> {
+    try {
+      const location = await this.locationService.getById(id);
+      return apiResponse(HttpStatus.OK, LocationMessages.GET, location);
     } catch (error) {
       throw error;
     }
