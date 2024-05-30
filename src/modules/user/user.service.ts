@@ -46,6 +46,19 @@ export class UserService extends CommonService<UserEntity> {
         ...createUserDto,
       });
       this.venueService.create({ venueOperatorId: user.id, name: venueName });
+      const otp = this.generateUniqueOtp();
+      const updatedUser = await this.userRepository.update(user.id, {
+        otp,
+        otp_expire: new Date(Date.now() + 60 * 60 * 50),
+      });
+      const data = { NAME: `${user.firstName} ${user.lastName}`, EMAIL: user.email, LINK: otp, EXPIRY: '3h' };
+      const mailParams = {
+        subject: 'Account verification',
+        templatePath: join(__dirname, '../../mailTemplate/accountVerificationEmailTemplate.html'),
+        data,
+      };
+
+      await sendEmail('dipali.rangpariya@azilen.com', mailParams);
       return user;
     } catch (error: unknown) {
       throw error;
@@ -95,18 +108,14 @@ export class UserService extends CommonService<UserEntity> {
   //   return user;
   // }
   async createLocationOperator(createUserDto: LocationOperatorDto) {
-    console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
     try {
       const user = await this.userRepository.findOne({ email: createUserDto.email });
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ user:', user);
       if (user) {
         throw new ForbiddenException(UserMessages.FOUND);
       }
 
       const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ role:', role);
       createUserDto.roleId = role.id;
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
 
       return await this.userRepository.create({
         ...createUserDto,

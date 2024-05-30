@@ -59,8 +59,8 @@ export class UserController {
       const user = await this.userService.resetPassword(resetPasswordDto);
       let message: string;
       if (user.isVerified === false) {
-        message = UserMessages.REGISTERED;
       } else {
+        message = UserMessages.REGISTERED;
         message = UserMessages.RESET_PASSWORD;
       }
       return apiResponse(HttpStatus.OK, message);
