@@ -1,5 +1,4 @@
 import { Expose } from 'class-transformer';
-import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 import {
   Column,
   CreateDateColumn,
@@ -7,15 +6,14 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
-import { SocialMediaEntity } from 'src/modules/social-media/entities/social-media.entity';
+import { SocialMediaEntity } from '../../../modules/social-media/entities/social-media.entity';
+import { UserEntity } from '../../../modules/user/entities/user.entity';
+import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 
 @Entity('venue')
 export class VenueEntity extends EntityRelationalHelper {

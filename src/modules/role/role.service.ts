@@ -3,6 +3,7 @@ import { RoleEntity } from './entities/role.entity';
 import { CreateRoleDto } from './dto/request-role.dto';
 import { CommonService } from '../../common/common.service';
 import { RoleRepository } from './role.repository';
+import { NullableType } from '../../utils/types/nullable.type';
 
 @Injectable()
 export class RoleService extends CommonService<RoleEntity> {
@@ -27,7 +28,9 @@ export class RoleService extends CommonService<RoleEntity> {
       throw new Error();
     }
   }
-
+  async findOneByRole(role: string): Promise<NullableType<RoleEntity>> {
+    return await this.roleRepository.findOneByRole(role);
+  }
   public async findOneById(id: string): Promise<RoleEntity> {
     return await this.roleRepository.findOne({ id });
   }

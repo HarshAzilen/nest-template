@@ -1,26 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSocialMediaDto } from './dto/create-social-media.dto';
-import { UpdateSocialMediaDto } from './dto/update-social-media.dto';
+import { CommonService } from '../../common/common.service';
+import { CreateSocialMediaDto } from './dto/request-social-media.dto';
+import { SocialMediaEntity } from './entities/social-media.entity';
+import { SocialMediaRepository } from './social-media.repository';
 
 @Injectable()
-export class SocialMediaService {
-  create(createSocialMediaDto: CreateSocialMediaDto) {
-    return 'This action adds a new socialMedia';
+export class SocialMediaService extends CommonService<SocialMediaEntity> {
+  constructor(private socialMediaRepository: SocialMediaRepository) {
+    super(socialMediaRepository);
   }
-
-  findAll() {
-    return `This action returns all socialMedia`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} socialMedia`;
-  }
-
-  update(id: number, updateSocialMediaDto: UpdateSocialMediaDto) {
-    return `This action updates a #${id} socialMedia`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} socialMedia`;
+  async create(createSocialMediaDto: CreateSocialMediaDto): Promise<SocialMediaEntity> {
+    return await this.socialMediaRepository.create(createSocialMediaDto);
   }
 }

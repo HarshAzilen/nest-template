@@ -32,12 +32,12 @@ export class UserEntity extends EntityRelationalHelper {
   @Column({ name: 'email', unique: true, type: 'varchar', nullable: true })
   email: string;
 
-  @Column({ name: 'password', unique: true, type: 'varchar', nullable: true })
+  @Column({ name: 'password', type: 'varchar', nullable: true })
   password!: string;
 
   @Expose()
-  @Column({ name: 'phone_no', unique: true, type: 'int', nullable: true })
-  phoneNo!: number;
+  @Column({ name: 'phone_no', type: 'varchar', nullable: true })
+  phoneNo!: string;
 
   @Expose()
   @Column({ name: 'role_id', type: 'uuid', nullable: true })

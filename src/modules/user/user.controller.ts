@@ -20,7 +20,7 @@ import { UserMessages } from './constants/user.messages';
 import { CreateUserDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserService } from './user.service';
-import { ApiResponse } from 'src/utils/types/response.type';
+import { ApiResponse } from '../../utils/types/response.type';
 import { UserEntity } from './entities/user.entity';
 
 // @UseGuards(JwtAuthGuard)

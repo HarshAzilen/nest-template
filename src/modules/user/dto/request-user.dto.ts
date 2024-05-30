@@ -1,4 +1,4 @@
-import { IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
@@ -11,7 +11,31 @@ export class CreateUserDto {
   readonly email: string;
 
   @IsOptional()
-  readonly password: string;
+  readonly password?: string;
+
+  @IsOptional()
+  phone_no?: number;
+
+  @IsOptional()
+  readonly roleId?: string;
+}
+export class LocationOperatorDto {
+  @IsNotEmpty()
+  firstName: string;
+
+  @IsNotEmpty()
+  lastName: string;
+
+  @IsNotEmpty()
+  email: string;
+
+  @IsOptional()
+  phoneNo: string;
+
+  @IsOptional()
+  roleId?: string;
+  @IsNotEmpty()
+  addedBy: string;
 }
 
 export interface ICredentials {

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { generateDynamicHtml } from './dynamicHtmlTemplate';
-import { emailParams } from 'src/utils/types/email-params.type';
+import { emailParams } from '../utils/types/email-params.type';
 
 export async function sendEmail(email: string, mailParams: emailParams) {
   const transporter = nodemailer.createTransport({

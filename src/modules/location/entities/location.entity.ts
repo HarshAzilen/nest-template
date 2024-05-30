@@ -12,10 +12,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { SubscriptionStatus } from '../constants/subscription-status.enum';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
-import { SocialMediaEntity } from 'src/modules/social-media/entities/social-media.entity';
-import { SubscriptionEntity } from 'src/modules/subscription/entities/subscription.entity';
+import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
+import { UserEntity } from '../../../modules/user/entities/user.entity';
+import { SocialMediaEntity } from '../../../modules/social-media/entities/social-media.entity';
+import { SubscriptionEntity } from '../../../modules/subscription/entities/subscription.entity';
 
 @Entity('location')
 export class LocationEntity extends EntityRelationalHelper {
@@ -32,20 +32,20 @@ export class LocationEntity extends EntityRelationalHelper {
   description!: string;
 
   @Expose()
-  @Column({ name: 'sub_status', type: 'enum', enum: SubscriptionStatus, nullable: true })
-  sub_status!: string;
+  @Column({ name: 'sub_status', type: 'varchar', length: 50, nullable: true })
+  sub_status!: SubscriptionStatus;
 
   @Expose()
   @Column({ name: 'sub_start_date', nullable: true })
   sub_start_date: Date;
 
   @Expose()
-  @Column({ name: 'sub_start_date', nullable: true })
+  @Column({ name: 'sub_end_date', nullable: true })
   sub_end_date: Date;
 
   @Expose()
-  @Column({ name: 'media', type: 'uuid', nullable: true })
-  media!: string;
+  @Column({ name: 'media_id', type: 'uuid', nullable: true })
+  mediaId!: string;
 
   @Expose()
   @Column({ name: 'venue_operator_id', type: 'uuid', nullable: false })
@@ -71,11 +71,11 @@ export class LocationEntity extends EntityRelationalHelper {
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'venue_operator_id', referencedColumnName: 'id' })
-  venue_operator: UserEntity;
+  venueOperator: UserEntity;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'location_operator_id', referencedColumnName: 'id' })
-  location_operator: UserEntity;
+  locationOperator: UserEntity;
 
   @ManyToOne(() => SubscriptionEntity)
   @JoinColumn({ name: 'subscription_id', referencedColumnName: 'id' })
@@ -83,5 +83,5 @@ export class LocationEntity extends EntityRelationalHelper {
 
   @OneToOne(() => SocialMediaEntity, { nullable: true })
   @JoinColumn()
-  social_media: SocialMediaEntity;
+  socialMedia: SocialMediaEntity;
 }
