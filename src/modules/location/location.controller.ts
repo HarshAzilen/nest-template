@@ -44,4 +44,15 @@ export class LocationController {
       throw error;
     }
   }
+
+  @Get(LocationRoutes.ID)
+  @HttpCode(HttpStatus.OK)
+  async getById(@Param('id') id: string): Promise<ApiResponse<LocationEntity>> {
+    try {
+      const location = await this.locationService.getById(id);
+      return apiResponse(HttpStatus.OK, LocationMessages.GET, location);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

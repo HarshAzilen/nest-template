@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommonService } from '../../common/common.service';
 import { SocialMediaService } from '../social-media/social-media.service';
 import { UserService } from '../user/user.service';
 import { LocationDto } from './dto/request-location.dto';
 import { LocationEntity } from './entities/location.entity';
 import { LocationRepository } from './location.repository';
+import { LocationMessages } from './constants/location.messages';
 
 @Injectable()
 export class LocationService extends CommonService<LocationEntity> {
@@ -37,9 +38,19 @@ export class LocationService extends CommonService<LocationEntity> {
   }
 
   async get(venueOperatorId: string): Promise<LocationEntity[]> {
-    console.log('🚀 ~ LocationService ~ get ~ venueOperatorId:', venueOperatorId);
     try {
       return await this.locationRepository.findWithColumn({ venue_operator_id: venueOperatorId });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+  async getById(id: string): Promise<LocationEntity> {
+    try {
+      const location = await this.locationRepository.findOne({ id });
+      if (!location) {
+        throw new BadRequestException(LocationMessages.NOT_FOUND);
+      }
+      return location;
     } catch (error: unknown) {
       throw error;
     }

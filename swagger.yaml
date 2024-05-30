@@ -262,11 +262,23 @@ paths:
       responses:
         '200':
           description: ''
-  /location/{venueOperatorId}:
+  /location/venue/{venueOperatorId}:
     get:
       operationId: LocationController_get
       parameters:
         - name: venueOperatorId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /location/{id}:
+    get:
+      operationId: LocationController_getById
+      parameters:
+        - name: id
           required: true
           in: path
           schema:
