@@ -35,4 +35,13 @@ export class LocationService extends CommonService<LocationEntity> {
       throw error;
     }
   }
+
+  async get(venueOperatorId: string): Promise<LocationEntity[]> {
+    console.log('🚀 ~ LocationService ~ get ~ venueOperatorId:', venueOperatorId);
+    try {
+      return await this.locationRepository.findWithColumn({ venue_operator_id: venueOperatorId });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
 }
