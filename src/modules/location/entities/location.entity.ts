@@ -32,6 +32,10 @@ export class LocationEntity extends EntityRelationalHelper {
   description!: string;
 
   @Expose()
+  @Column({ name: 'location_address', type: 'varchar', nullable: true })
+  locationAddress!: string;
+
+  @Expose()
   @Column({ name: 'sub_status', type: 'varchar', length: 50, nullable: true })
   sub_status!: SubscriptionStatus;
 

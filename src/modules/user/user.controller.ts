@@ -48,9 +48,18 @@ export class UserController {
     }
   }
 
-  @Get()
-  async findAll() {
-    return this.userService.findAll();
+  @Get('search/:email')
+  @HttpCode(HttpStatus.OK)
+  async search(
+    @Param('email') email: string,
+    @Body('venueOperatorId') venueOperatorId: string,
+  ): Promise<ApiResponse<UserEntity[]>> {
+    try {
+      const user = await this.userService.searchByEmail(email, venueOperatorId);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL, user);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get(':uuid')

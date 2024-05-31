@@ -11,6 +11,7 @@ export class CreateLocationDto {
   venue_operator_id: string;
   location_operator_id: string;
   subscription_id?: string;
+  locationAddress?: string;
 }
 
 export class UpdateLocationDto {
@@ -21,6 +22,10 @@ export class UpdateLocationDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  locationAddress?: string;
 }
 
 export class contactDto {

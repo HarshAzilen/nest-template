@@ -58,9 +58,9 @@ export class UserService extends CommonService<UserEntity> {
     return user;
   }
 
-  async findAll(): Promise<UserEntity[]> {
+  async searchByEmail(email: string, venueOperatorId: string): Promise<UserEntity[]> {
     try {
-      return await this.userRepository.findAll();
+      return await this.userRepository.searchByEmail(email, venueOperatorId);
     } catch (error: any) {
       throw new Error();
     }

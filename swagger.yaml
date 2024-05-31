@@ -129,15 +129,21 @@ paths:
       responses:
         '201':
           description: ''
-    get:
-      operationId: UserController_findAll
-      parameters: []
-      responses:
-        '200':
-          description: ''
   /user/send_otp/{email}:
     get:
       operationId: UserController_emailSend
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /user/search/{email}:
+    get:
+      operationId: UserController_search
       parameters:
         - name: email
           required: true
