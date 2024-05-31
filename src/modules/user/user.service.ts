@@ -11,6 +11,7 @@ import { UserRepository } from './user.repository';
 import { RoleRepository } from '../role/role.repository';
 import { ROLE } from '../role/constants/role.enum';
 import { RoleService } from '../role/role.service';
+import { UserMessages } from './constants/user.messages';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -61,6 +62,19 @@ export class UserService extends CommonService<UserEntity> {
   async searchByEmail(email: string, venueOperatorId: string): Promise<UserEntity[]> {
     try {
       return await this.userRepository.searchByEmail(email, venueOperatorId);
+    } catch (error: any) {
+      throw new Error();
+    }
+  }
+  async verifyOperator(email: string, venueOperatorId: string): Promise<string> {
+    try {
+      const user = await this.userRepository.findOne({ email });
+      if (user) {
+        if (user.addedBy !== venueOperatorId) {
+          throw new BadRequestException(UserMessages.ALREADY_ASSOCIATED);
+        }
+      }
+      return email;
     } catch (error: any) {
       throw new Error();
     }

@@ -62,6 +62,20 @@ export class UserController {
     }
   }
 
+  @Get('verify-operator/:email')
+  @HttpCode(HttpStatus.OK)
+  async verifyOperator(
+    @Param('email') email: string,
+    @Body('venueOperatorId') venueOperatorId: string,
+  ): Promise<ApiResponse<string>> {
+    try {
+      const user = await this.userService.verifyOperator(email, venueOperatorId);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string) {
     const user = await this.userService.findOne(uuid);

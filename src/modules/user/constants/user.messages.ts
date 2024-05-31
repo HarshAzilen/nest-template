@@ -6,4 +6,5 @@ export const enum UserMessages {
   EMAIL = 'Email sent Successfully',
   DELETE = 'User deleted successfully',
   NOT_FOUND = 'User does not exists!',
+  ALREADY_ASSOCIATED = 'This user is already associated with other operator',
 }
