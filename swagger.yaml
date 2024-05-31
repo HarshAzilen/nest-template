@@ -102,7 +102,7 @@ paths:
         '200':
           description: ''
       tags: *ref_0
-  /user/sign-up:
+  /user/venue-operator:
     post:
       operationId: UserController_signUp
       parameters: []

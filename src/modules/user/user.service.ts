@@ -35,6 +35,9 @@ export class UserService extends CommonService<UserEntity> {
         throw new BadRequestException(UserMessages.FOUND);
       }
 
+      const role = await this.roleService.findOneByRole(ROLE.VENUE_OPERATOR);
+      createUserDto.roleId = role.id;
+
       const venueExist = await this.venueService.findOneByVenueName(createUserDto.venueName);
       if (venueExist) {
         throw new BadRequestException(VenueMessages.FOUND);

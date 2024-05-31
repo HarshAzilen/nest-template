@@ -23,8 +23,8 @@ import { UserEntity } from './entities/user.entity';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('sign-up')
-  async signUp(@Body() createUserDto: CreateUserDto) {
+  @Post('venue-operator')
+  async signUp(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<UserEntity>> {
     try {
       await this.userService.create(createUserDto);
       return apiResponse(HttpStatus.OK, UserMessages.EMAIL);

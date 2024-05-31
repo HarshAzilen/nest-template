@@ -10,8 +10,14 @@ export class VenueService extends CommonService<VenueEntity> {
   constructor(private venueRepository: VenueRepository) {
     super(venueRepository);
   }
-  create(createVenueDto: CreateVenueDto) {
-    return 'This action adds a new venue';
+  async create(createVenueDto: CreateVenueDto) {
+    try {
+      return await this.venueRepository.create({
+        ...createVenueDto,
+      });
+    } catch (error: unknown) {
+      throw new Error();
+    }
   }
 
   findAll() {

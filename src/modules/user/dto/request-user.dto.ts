@@ -17,7 +17,7 @@ export class CreateUserDto {
   phone_no?: number;
 
   @IsOptional()
-  readonly roleId?: string;
+  roleId?: string;
 
   @IsOptional()
   venueName?: string;
