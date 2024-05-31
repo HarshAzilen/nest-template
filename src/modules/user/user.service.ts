@@ -14,6 +14,7 @@ import { VenueMessages } from '../venue/constants/venue.messages';
 import { RoleRepository } from '../role/role.repository';
 import { ROLE } from '../role/constants/role.enum';
 import { RoleService } from '../role/role.service';
+import { pick } from '../../utils/objectKeyFilter';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -50,7 +51,7 @@ export class UserService extends CommonService<UserEntity> {
       });
       this.venueService.create({ venueOperatorId: user.id, name: venueName });
       const otp = this.generateUniqueOtp();
-      const updatedUser = await this.userRepository.update(user.id, {
+      let updatedUser = await this.userRepository.update(user.id, {
         otp,
         otp_expire: new Date(Date.now() + 60 * 60 * 50),
       });
@@ -62,7 +63,18 @@ export class UserService extends CommonService<UserEntity> {
       };
 
       await sendEmail('dipali.rangpariya@azilen.com', mailParams);
-      return user;
+      updatedUser = pick(updatedUser, [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'phoneNo',
+        'roleId',
+        'isVerified',
+        'addedBy',
+        'refreshToken',
+      ]);
+      return updatedUser;
     } catch (error: unknown) {
       throw error;
     }
@@ -70,7 +82,7 @@ export class UserService extends CommonService<UserEntity> {
 
   async signIn(createUserDto: CreateUserDto): Promise<UserEntity> {
     try {
-      const user = await this.userRepository.findOne({
+      let user = await this.userRepository.findOne({
         email: createUserDto.email,
       });
 
@@ -81,6 +93,17 @@ export class UserService extends CommonService<UserEntity> {
       if (!(await compare(createUserDto.password, user.password))) {
         throw new BadRequestException(UserMessages.WRONG_PASSWORD);
       }
+      user = pick(user, [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'phoneNo',
+        'roleId',
+        'isVerified',
+        'addedBy',
+        'refreshToken',
+      ]);
       return user;
     } catch (error: unknown) {
       throw error;

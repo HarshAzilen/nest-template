@@ -26,8 +26,8 @@ export class UserController {
   @Post('venue-operator')
   async signUp(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<UserEntity>> {
     try {
-      await this.userService.create(createUserDto);
-      return apiResponse(HttpStatus.OK, UserMessages.EMAIL);
+      const user = await this.userService.create(createUserDto);
+      return apiResponse(HttpStatus.CREATED, UserMessages.EMAIL, user);
     } catch (error) {
       throw error;
     }
