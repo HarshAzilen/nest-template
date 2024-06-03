@@ -115,6 +115,19 @@ paths:
       responses:
         '201':
           description: ''
+  /user/send_otp/{email}:
+    get:
+      operationId: UserController_emailSend
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /user/search/{email}:
   /user/sign-in:
     post:
       operationId: UserController_signIn
@@ -156,7 +169,19 @@ paths:
           description: ''
   /user/send-otp/{email}:
     get:
-      operationId: UserController_emailSend
+      operationId: UserController_search
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /user/verify-operator/{email}:
+    get:
+      operationId: UserController_verifyOperator
       parameters:
         - name: email
           required: true

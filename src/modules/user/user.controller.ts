@@ -1,22 +1,12 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  NotFoundException,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
 
-import { ApiResponse } from '../../utils/types/response.type';
 import { apiResponse } from '../../utils/response-helper';
+import { ApiResponse } from '../../utils/types/response.type';
 import { UserMessages } from './constants/user.messages';
-import { UserService } from './user.service';
+import { UserRoutes } from './constants/user.routes';
 import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserService } from './user.service';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -80,22 +70,31 @@ export class UserController {
     }
   }
 
-  @Get()
-  async findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    const user = await this.userService.findOne(uuid);
-    if (!user) {
-      throw new NotFoundException();
+  @Get(UserRoutes.SEARCH)
+  @HttpCode(HttpStatus.OK)
+  async search(
+    @Param('email') email: string,
+    @Body('venueOperatorId') venueOperatorId: string,
+  ): Promise<ApiResponse<UserEntity[]>> {
+    try {
+      const user = await this.userService.searchByEmail(email, venueOperatorId);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL, user);
+    } catch (error) {
+      throw error;
     }
-    return user;
   }
 
-  @Delete(':uuid')
-  async remove(@Param('uuid') uuid: string) {
-    return this.userService.remove(uuid);
+  @Get(UserRoutes.VERIFY_OPERATOR)
+  @HttpCode(HttpStatus.OK)
+  async verifyOperator(
+    @Param('email') email: string,
+    @Body('venueOperatorId') venueOperatorId: string,
+  ): Promise<ApiResponse<string>> {
+    try {
+      const user = await this.userService.verifyOperator(email, venueOperatorId);
+      return apiResponse(HttpStatus.OK, UserMessages.EMAIL, user);
+    } catch (error) {
+      throw error;
+    }
   }
 }

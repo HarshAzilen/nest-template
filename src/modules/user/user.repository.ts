@@ -23,6 +23,14 @@ export class UserRepository extends CommonRepository<UserEntity> {
   async findAll(): Promise<UserEntity[]> {
     return await this.userRepository.find();
   }
+  async searchByEmail(email: string, venueOperatorId: string): Promise<UserEntity[]> {
+    console.log('🚀 ~ UserRepository ~ searchByEmail ~ email:', email);
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email LIKE :email', { email: `%${email}%` })
+      .andWhere('user.addedBy = :venueOperatorId', { venueOperatorId })
+      .getMany();
+  }
 
   async findUserWithRole(id: string): Promise<UserEntity> {
     return await this.userRepository
