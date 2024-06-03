@@ -7,6 +7,101 @@ paths:
       responses:
         '200':
           description: ''
+  /event/sse:
+    get:
+      operationId: ServerSentEventController_sse
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /user/venue-operator:
+    post:
+      operationId: UserController_signUp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: ''
+  /user/sign-in:
+    post:
+      operationId: UserController_signIn
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: ''
+  /user/verify-otp:
+    post:
+      operationId: UserController_verifyOtp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequestDto'
+      responses:
+        '201':
+          description: ''
+  /user/reset-password:
+    put:
+      operationId: UserController_resetPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordDto'
+      responses:
+        '200':
+          description: ''
+  /user/send-otp/{email}:
+    get:
+      operationId: UserController_emailSend
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /user/search/{email}:
+    get:
+      operationId: UserController_search
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /user/verify-operator/{email}:
+    get:
+      operationId: UserController_verifyOperator
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
   /api/auth/sign-up:
     post:
       operationId: AuthController_signUp
@@ -102,94 +197,6 @@ paths:
         '200':
           description: ''
       tags: *ref_0
-  /user/venue-operator:
-    post:
-      operationId: UserController_signUp
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserDto'
-      responses:
-        '201':
-          description: ''
-  /user/sign-in:
-    post:
-      operationId: UserController_signIn
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserDto'
-      responses:
-        '201':
-          description: ''
-  /user/verify-otp:
-    post:
-      operationId: UserController_verifyOtp
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OtpRequestDto'
-      responses:
-        '201':
-          description: ''
-  /user/reset-password:
-    put:
-      operationId: UserController_resetPassword
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResetPasswordDto'
-      responses:
-        '200':
-          description: ''
-  /user/send-otp/{email}:
-    get:
-      operationId: UserController_emailSend
-      parameters:
-        - name: email
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-  /user/search/{email}:
-    get:
-      operationId: UserController_search
-      parameters:
-        - name: email
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-  /user/verify-operator/{email}:
-    get:
-      operationId: UserController_verifyOperator
-      parameters:
-        - name: email
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
   /venue:
     post:
       operationId: VenueController_create
@@ -246,13 +253,6 @@ paths:
           in: path
           schema:
             type: string
-      responses:
-        '200':
-          description: ''
-  /event/sse:
-    get:
-      operationId: ServerSentEventController_sse
-      parameters: []
       responses:
         '200':
           description: ''
@@ -323,6 +323,12 @@ components:
     CreateUserDto:
       type: object
       properties: {}
+    OtpRequestDto:
+      type: object
+      properties: {}
+    ResetPasswordDto:
+      type: object
+      properties: {}
     SignInDto:
       type: object
       properties:
@@ -382,12 +388,6 @@ components:
         - password1
         - password2
         - password
-    OtpRequestDto:
-      type: object
-      properties: {}
-    ResetPasswordDto:
-      type: object
-      properties: {}
     CreateVenueDto:
       type: object
       properties: {}

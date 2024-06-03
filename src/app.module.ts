@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './modules/auth/auth.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controllers';
@@ -10,7 +9,6 @@ import { CronJobModule } from './modules/cronjob/cronjob.module';
 import { ServerSentEventModule } from './modules/server-sent-event/server-sent-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { JwtModule } from './modules/jwt/jwt.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
 import { ClientModule } from './modules/client/client.module';
@@ -67,8 +65,6 @@ const levels = {
     }),
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: false, envFilePath: '.env' }),
     DatabaseModule,
-    AuthModule,
-    JwtModule,
     CronJobModule,
     ServerSentEventModule,
     ServeStaticModule.forRoot({
