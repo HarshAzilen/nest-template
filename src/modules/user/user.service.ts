@@ -30,19 +30,13 @@ export class UserService extends CommonService<UserEntity> {
     }
   }
   async createLocationOperator(createUserDto: LocationOperatorDto) {
-    console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
     try {
       const user = await this.userRepository.findOne({ email: createUserDto.email });
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ user:', user);
       if (user) {
         throw new ForbiddenException('User already exists');
       }
-
       const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ role:', role);
       createUserDto.roleId = role.id;
-      console.log('🚀 ~ UserService ~ createLocationOperator ~ createUserDto:', createUserDto);
-
       return await this.userRepository.create({
         ...createUserDto,
       });

@@ -153,6 +153,18 @@ paths:
       responses:
         '200':
           description: ''
+  /user/verify-operator/{email}:
+    get:
+      operationId: UserController_verifyOperator
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
   /user/{uuid}:
     get:
       operationId: UserController_findOne
