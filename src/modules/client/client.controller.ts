@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { oauthServer } from '../oauth-server/oauth-server';
+// import { oauthServer } from '../oauth-server/oauth-server';
 import { ClientService } from './client.service';
 import { CreateClientDto, UpdateClientDto } from './dto/request-client.dto';
 

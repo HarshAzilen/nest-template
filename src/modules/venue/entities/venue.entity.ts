@@ -1,4 +1,6 @@
 import { Expose } from 'class-transformer';
+import { SocialMediaEntity } from '../../../modules/social-media/entities/social-media.entity';
+import { UserEntity } from '../../../modules/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,8 +13,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { SocialMediaEntity } from '../../../modules/social-media/entities/social-media.entity';
-import { UserEntity } from '../../../modules/user/entities/user.entity';
 import { EntityRelationalHelper } from '../../../utils/relational-entity-helper';
 
 @Entity('venue')
@@ -39,7 +39,7 @@ export class VenueEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'venue_operator_id', type: 'uuid', nullable: false })
-  venue_operator_id!: string;
+  venueOperatorId!: string;
 
   @CreateDateColumn({
     name: 'created_at',
