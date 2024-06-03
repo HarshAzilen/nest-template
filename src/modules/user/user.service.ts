@@ -33,7 +33,7 @@ export class UserService extends CommonService<UserEntity> {
     try {
       const user = await this.userRepository.findOne({ email: createUserDto.email });
       if (user) {
-        throw new ForbiddenException('User already exists');
+        throw new ForbiddenException(UserMessages.ALREADY_EXIST);
       }
       const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
       createUserDto.roleId = role.id;
@@ -57,7 +57,7 @@ export class UserService extends CommonService<UserEntity> {
     try {
       return await this.userRepository.searchByEmail(email, venueOperatorId);
     } catch (error: any) {
-      throw new Error();
+      throw error;
     }
   }
   async verifyOperator(email: string, venueOperatorId: string): Promise<string> {

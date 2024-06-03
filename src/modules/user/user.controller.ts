@@ -1,27 +1,12 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  ForbiddenException,
-  Get,
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  NotFoundException,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 
 import { apiResponse } from '../../utils/response-helper';
-import { UserMessages } from './constants/user.messages';
-import { CreateUserDto } from './dto/request-user.dto';
-import { UpdateUserDto } from './dto/response-user.dto';
-import { UserService } from './user.service';
 import { ApiResponse } from '../../utils/types/response.type';
+import { UserMessages } from './constants/user.messages';
+import { UserRoutes } from './constants/user.routes';
+import { CreateUserDto } from './dto/request-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserService } from './user.service';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -31,7 +16,8 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      return this.userService.create(createUserDto);
+      const user = await this.userService.create(createUserDto);
+      return apiResponse(HttpStatus.OK, UserMessages.CREATE, user);
     } catch (error) {
       throw error;
     }
@@ -48,7 +34,7 @@ export class UserController {
     }
   }
 
-  @Get('search/:email')
+  @Get(UserRoutes.SEARCH)
   @HttpCode(HttpStatus.OK)
   async search(
     @Param('email') email: string,
@@ -62,7 +48,7 @@ export class UserController {
     }
   }
 
-  @Get('verify-operator/:email')
+  @Get(UserRoutes.VERIFY_OPERATOR)
   @HttpCode(HttpStatus.OK)
   async verifyOperator(
     @Param('email') email: string,
@@ -74,19 +60,5 @@ export class UserController {
     } catch (error) {
       throw error;
     }
-  }
-
-  @Get(':uuid')
-  async findOne(@Param('uuid') uuid: string) {
-    const user = await this.userService.findOne(uuid);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    return user;
-  }
-
-  @Delete(':uuid')
-  async remove(@Param('uuid') uuid: string) {
-    return this.userService.remove(uuid);
   }
 }
