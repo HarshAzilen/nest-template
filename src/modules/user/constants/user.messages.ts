@@ -12,6 +12,8 @@ export const enum UserMessages {
   REGISTERED = 'You have registered successfully',
   RESET_PASSWORD = 'Reset password successfully',
   NOT_FOUND = 'User does not exists!',
+  ALREADY_EXIST = 'User already exists!',
+  ALREADY_ASSOCIATED = 'This user is already associated with other operator',
   FOUND = 'User already exists!',
   NOT_MATCH = 'Password does not match!',
   DIFFERENT_PASSWORD = 'New password must be different',

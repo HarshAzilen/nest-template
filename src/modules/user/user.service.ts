@@ -136,12 +136,10 @@ export class UserService extends CommonService<UserEntity> {
     try {
       const user = await this.userRepository.findOne({ email: createUserDto.email });
       if (user) {
-        throw new ForbiddenException(UserMessages.FOUND);
+        throw new ForbiddenException(UserMessages.ALREADY_EXIST);
       }
-
       const role = await this.roleService.findOneByRole(ROLE.LOCATION_OPERATOr);
       createUserDto.roleId = role.id;
-
       return await this.userRepository.create({
         ...createUserDto,
       });
@@ -158,9 +156,22 @@ export class UserService extends CommonService<UserEntity> {
     return user;
   }
 
-  async findAll(): Promise<UserEntity[]> {
+  async searchByEmail(email: string, venueOperatorId: string): Promise<UserEntity[]> {
     try {
-      return await this.userRepository.findAll();
+      return await this.userRepository.searchByEmail(email, venueOperatorId);
+    } catch (error: any) {
+      throw error;
+    }
+  }
+  async verifyOperator(email: string, venueOperatorId: string): Promise<string> {
+    try {
+      const user = await this.userRepository.findOne({ email });
+      if (user) {
+        if (user.addedBy !== venueOperatorId) {
+          throw new BadRequestException(UserMessages.ALREADY_ASSOCIATED);
+        }
+      }
+      return email;
     } catch (error: any) {
       throw new Error();
     }

@@ -1,5 +1,7 @@
 export const enum UserRoutes {
   ID = ':id',
+  SEARCH = 'search/:email',
+  VERIFY_OPERATOR = 'verify-operator/:email',
   VENUE_OPERATOR = 'venue-operator',
   SIGN_IN = 'sign-in',
   VERIFY_OTP = 'verify-otp',

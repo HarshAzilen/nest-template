@@ -4,13 +4,14 @@ import { SubscriptionStatus } from '../constants/subscription-status.enum';
 export class CreateLocationDto {
   name: string;
   description?: string;
-  sub_status?: SubscriptionStatus;
-  sub_start_date?: Date;
-  sub_end_date?: Date;
-  media_id?: string;
-  venue_operator_id: string;
-  location_operator_id: string;
-  subscription_id?: string;
+  subStatus?: SubscriptionStatus;
+  subStartDate?: Date;
+  subEndDate?: Date;
+  mediaId?: string;
+  venueOperatorId: string;
+  locationOperatorId: string;
+  subscriptionId?: string;
+  locationAddress?: string;
 }
 
 export class UpdateLocationDto {
@@ -21,6 +22,10 @@ export class UpdateLocationDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  locationAddress?: string;
 }
 
 export class contactDto {
