@@ -17,13 +17,14 @@ import { UserMessages } from './constants/user.messages';
 import { UserService } from './user.service';
 import { CreateUserDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserRoutes } from './constants/user.routes';
 
 // @UseGuards(JwtAuthGuard)
-@Controller('user')
+@Controller(UserRoutes.USER)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('venue-operator')
+  @Post(UserRoutes.VENUE_OPERATOR)
   async signUp(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<UserEntity>> {
     try {
       const user = await this.userService.create(createUserDto);
@@ -33,7 +34,7 @@ export class UserController {
     }
   }
 
-  @Post('sign-in')
+  @Post(UserRoutes.SIGN_IN)
   async signIn(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<UserEntity>> {
     try {
       const user = await this.userService.signIn(createUserDto);
@@ -43,7 +44,7 @@ export class UserController {
     }
   }
 
-  @Post('verify-otp')
+  @Post(UserRoutes.VERIFY_OTP)
   async verifyOtp(@Body() otpRequestDto: OtpRequestDto): Promise<ApiResponse<UserEntity>> {
     try {
       await this.userService.verifyOtp(otpRequestDto);
@@ -53,7 +54,7 @@ export class UserController {
     }
   }
 
-  @Put('reset-password')
+  @Put(UserRoutes.RESET_PASSWORD)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<ApiResponse<UserEntity>> {
     try {
       const user = await this.userService.resetPassword(resetPasswordDto);
@@ -69,7 +70,7 @@ export class UserController {
     }
   }
 
-  @Get('send-otp/:email')
+  @Get(UserRoutes.SEND_OTP)
   @HttpCode(HttpStatus.OK)
   async emailSend(@Param('email') email: string): Promise<ApiResponse<UserEntity>> {
     try {

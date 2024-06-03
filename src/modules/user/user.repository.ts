@@ -6,6 +6,7 @@ import { NullableType } from '../../utils/types/nullable.type';
 import { CommonRepository } from '../../common/common.repository';
 import { CreateUserDto } from './dto/request-user.dto';
 import { EntityCondition } from '../../utils/types/entity-condition.type';
+import { UserMessages } from './constants/user.messages';
 
 @Injectable()
 export class UserRepository extends CommonRepository<UserEntity> {
@@ -38,7 +39,7 @@ export class UserRepository extends CommonRepository<UserEntity> {
     const entity = await this.userRepository.findOne({ where: { id } });
 
     if (!entity) {
-      throw new Error('User not found');
+      throw new Error(UserMessages.NOT_FOUND);
     }
 
     // Update the entity with the payload
@@ -60,7 +61,7 @@ export class UserRepository extends CommonRepository<UserEntity> {
   async delete(id: string): Promise<void> {
     const deleteResult = await this.userRepository.delete(id);
     if (deleteResult.affected === 0) {
-      throw new NotFoundException(`User with ID ${id} not found for deletion`);
+      throw new NotFoundException(UserMessages.NOT_FOUND);
     }
   }
 }

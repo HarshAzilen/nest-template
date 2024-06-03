@@ -50,7 +50,7 @@ export class ResetPasswordDto {
   readonly confirmPassword: string;
 
   @IsOptional()
-  readonly userId: string;
+  readonly email: string;
 }
 
 export class forgotPasswordDto {
@@ -63,7 +63,7 @@ export class OtpRequestDto {
   readonly otp: string;
 
   @IsOptional()
-  readonly userId: string;
+  readonly email: string;
 }
 export interface ICredentials {
   version: number;

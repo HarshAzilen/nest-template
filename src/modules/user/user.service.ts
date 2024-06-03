@@ -3,18 +3,17 @@ import { compare, hash } from 'bcrypt';
 import { join } from 'path';
 import { CommonService } from '../../common/common.service';
 import { sendEmail } from '../../helpers/sendEmail';
+import { pick } from '../../utils/objectKeyFilter';
 import { isNull, isUndefined } from '../../utils/validation.util';
+import { ROLE } from '../role/constants/role.enum';
+import { RoleService } from '../role/role.service';
+import { VenueMessages } from '../venue/constants/venue.messages';
+import { VenueService } from '../venue/venue.service';
 import { UserMessages } from './constants/user.messages';
 import { CreateUserDto, LocationOperatorDto, OtpRequestDto, ResetPasswordDto } from './dto/request-user.dto';
 import { UpdateUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
-import { VenueService } from '../venue/venue.service';
-import { VenueMessages } from '../venue/constants/venue.messages';
-import { RoleRepository } from '../role/role.repository';
-import { ROLE } from '../role/constants/role.enum';
-import { RoleService } from '../role/role.service';
-import { pick } from '../../utils/objectKeyFilter';
 
 @Injectable()
 export class UserService extends CommonService<UserEntity> {
@@ -111,7 +110,7 @@ export class UserService extends CommonService<UserEntity> {
   }
 
   public async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ id: resetPasswordDto.userId });
+    const user = await this.userRepository.findOne({ email: resetPasswordDto.email });
 
     if (!user) {
       throw new BadRequestException(UserMessages.NOT_FOUND);
@@ -168,7 +167,7 @@ export class UserService extends CommonService<UserEntity> {
   }
   public async verifyOtp(otpRequestDto: OtpRequestDto): Promise<boolean> {
     const user = await this.userRepository.findOne({
-      id: otpRequestDto.userId,
+      email: otpRequestDto.email,
     });
     if (!user) {
       throw new BadRequestException(UserMessages.NOT_FOUND);
@@ -180,6 +179,10 @@ export class UserService extends CommonService<UserEntity> {
     if (user && date > user.otp_expire) {
       throw new BadRequestException(UserMessages.OTP_EXPIRED);
     }
+    await this.userRepository.update(user.id, {
+      otp: null,
+      otp_expire: null,
+    });
     return true;
   }
 
@@ -196,7 +199,7 @@ export class UserService extends CommonService<UserEntity> {
     try {
       const user = await this.userRepository.findOne({ email });
       if (!user) {
-        throw new BadRequestException('Email not found');
+        throw new BadRequestException(UserMessages.NOT_FOUND);
       }
       const otp = this.generateUniqueOtp();
       const updatedUser = await this.userRepository.update(user.id, {
@@ -231,7 +234,7 @@ export class UserService extends CommonService<UserEntity> {
 
   private throwUnauthorizedException(user: undefined | null | UserEntity): void {
     if (isUndefined(user) || isNull(user)) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(UserMessages.WRONG_PASSWORD);
     }
   }
 
@@ -295,10 +298,10 @@ export class UserService extends CommonService<UserEntity> {
     const user = await this.userRepository.findOne({ id: userId });
 
     if (!(await compare(password, user.password))) {
-      throw new BadRequestException('Wrong password');
+      throw new BadRequestException(UserMessages.WRONG_PASSWORD);
     }
     if (await compare(newPassword, user.password)) {
-      throw new BadRequestException('New password must be different');
+      throw new BadRequestException(UserMessages.DIFFERENT_PASSWORD);
     }
     user.password = await hash(newPassword, 10);
     await this.update(user.id, user);
