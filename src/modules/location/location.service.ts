@@ -27,9 +27,9 @@ export class LocationService extends CommonService<LocationEntity> {
       const media = await this.socialMediaService.create(socialMedia);
       const locationDto = {
         ...location,
-        location_operator_id: locationOperator.id,
+        locationOperatorId: locationOperator.id,
         mediaId: media.id,
-        venue_operator_id,
+        venueOperatorId: venue_operator_id,
       };
       return this.locationRepository.create(locationDto);
     } catch (error: unknown) {
@@ -39,7 +39,7 @@ export class LocationService extends CommonService<LocationEntity> {
 
   async get(venueOperatorId: string): Promise<LocationEntity[]> {
     try {
-      return await this.locationRepository.findWithColumn({ venue_operator_id: venueOperatorId });
+      return await this.locationRepository.findWithColumn({ venueOperatorId });
     } catch (error: unknown) {
       throw error;
     }

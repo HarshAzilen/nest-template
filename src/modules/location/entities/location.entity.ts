@@ -37,15 +37,15 @@ export class LocationEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'sub_status', type: 'varchar', length: 50, nullable: true })
-  sub_status!: SubscriptionStatus;
+  subStatus!: SubscriptionStatus;
 
   @Expose()
   @Column({ name: 'sub_start_date', nullable: true })
-  sub_start_date: Date;
+  subStartDate: Date;
 
   @Expose()
   @Column({ name: 'sub_end_date', nullable: true })
-  sub_end_date: Date;
+  subEndDate: Date;
 
   @Expose()
   @Column({ name: 'media_id', type: 'uuid', nullable: true })
@@ -53,15 +53,15 @@ export class LocationEntity extends EntityRelationalHelper {
 
   @Expose()
   @Column({ name: 'venue_operator_id', type: 'uuid', nullable: false })
-  venue_operator_id!: string;
+  venueOperatorId!: string;
 
   @Expose()
   @Column({ name: 'location_operator_id', type: 'uuid', nullable: false })
-  location_operator_id!: string;
+  locationOperatorId!: string;
 
   @Expose()
   @Column({ name: 'subscription_id', type: 'uuid', nullable: true })
-  subscription_id!: string;
+  subscriptionId!: string;
 
   @CreateDateColumn({
     name: 'created_at',
