@@ -4,14 +4,9 @@ import { forwardRef, Module } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { DatabaseModule } from './database.module';
-import { AuthModule } from '../modules/auth/auth.module';
 
 @Module({
-  imports: [
-    AuthModule,
-    forwardRef(() => DatabaseModule),
-    ConfigModule.forRoot({ ignoreEnvFile: false, envFilePath: '.env' }),
-  ],
+  imports: [forwardRef(() => DatabaseModule), ConfigModule.forRoot({ ignoreEnvFile: false, envFilePath: '.env' })],
 })
 export class TypeORMCLIModule {}
 
