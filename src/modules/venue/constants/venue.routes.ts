@@ -1,3 +1,4 @@
-export const enum UserRoutes {
+export const enum VenueRoutes {
   ID = ':id',
+  PROFILE = 'profile/:id',
 }

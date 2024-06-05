@@ -17,4 +17,5 @@ export const enum UserMessages {
   FOUND = 'User already exists!',
   NOT_MATCH = 'Password does not match!',
   DIFFERENT_PASSWORD = 'New password must be different',
+  NOT_VERIFIED = 'User is not verified',
 }

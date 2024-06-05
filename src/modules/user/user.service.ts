@@ -50,7 +50,7 @@ export class UserService extends CommonService<UserEntity> {
       });
       this.venueService.create({ venueOperatorId: user.id, name: venueName });
       const otp = this.generateUniqueOtp();
-      let updatedUser = await this.userRepository.update(user.id, {
+      let updatedUser = await this.update(user.id, {
         otp,
         otp_expire: new Date(Date.now() + 60 * 60 * 50),
       });
@@ -114,6 +114,9 @@ export class UserService extends CommonService<UserEntity> {
 
     if (!user) {
       throw new BadRequestException(UserMessages.NOT_FOUND);
+    }
+    if (user.isVerified === false) {
+      throw new BadRequestException(UserMessages.NOT_VERIFIED);
     }
 
     if (resetPasswordDto.confirmPassword != resetPasswordDto.password) {
@@ -190,10 +193,16 @@ export class UserService extends CommonService<UserEntity> {
     if (user && date > user.otp_expire) {
       throw new BadRequestException(UserMessages.OTP_EXPIRED);
     }
-    await this.userRepository.update(user.id, {
+    await this.update(user.id, {
       otp: null,
       otp_expire: null,
+      isVerified: true,
     });
+    // await this.userRepository.update(user.id, {
+    //   otp: null,
+    //   otp_expire: null,
+    //   isVerified: true,
+    // });
     return true;
   }
 
@@ -213,7 +222,7 @@ export class UserService extends CommonService<UserEntity> {
         throw new BadRequestException(UserMessages.NOT_FOUND);
       }
       const otp = this.generateUniqueOtp();
-      const updatedUser = await this.userRepository.update(user.id, {
+      const updatedUser = await this.update(user.id, {
         otp,
         otp_expire: new Date(Date.now() + 3 * 60 * 60 * 1000),
       });
@@ -291,8 +300,15 @@ export class UserService extends CommonService<UserEntity> {
     return this.userRepository.findOneByEmail(email);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.userRepository.update(id, updateUserDto);
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+    const entity = await this.userRepository.findOne({ id });
+
+    if (!entity) {
+      throw new Error(UserMessages.NOT_FOUND);
+    }
+
+    Object.assign(entity, updateUserDto);
+    return await this.userRepository.update(entity);
   }
 
   public async findUserWithRole(id: string): Promise<UserEntity> {

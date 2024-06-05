@@ -2,6 +2,9 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
+  id?: string;
+
+  @IsOptional()
   readonly firstName: string;
 
   @IsOptional()
@@ -14,13 +17,22 @@ export class CreateUserDto {
   readonly password?: string;
 
   @IsOptional()
-  phone_no?: number;
+  phoneNo?: string;
 
   @IsOptional()
   roleId?: string;
 
   @IsOptional()
   venueName?: string;
+
+  @IsOptional()
+  otp?: string;
+
+  @IsOptional()
+  otp_expire?: Date;
+
+  @IsOptional()
+  isVerified?: boolean;
 }
 
 export class LocationOperatorDto {

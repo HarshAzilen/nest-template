@@ -33,6 +33,28 @@ export class VenueRepository extends CommonRepository<VenueEntity> {
       .getRawOne();
   }
 
+  async getVenueProfile(venueOperatorId: string): Promise<VenueEntity> {
+    return await this.venueRepository
+      .createQueryBuilder('venue')
+      .leftJoinAndSelect('venue.venue_operator', 'venueOperator')
+      .leftJoinAndSelect('venue.social_media', 'socialMedia')
+      .select([
+        'venue.id',
+        'venue.name',
+        'venue.description',
+        'venueOperator.first_name',
+        'venueOperator.last_name',
+        'venueOperator.email',
+        'venueOperator.phone_no',
+        'socialMedia.facebook',
+        'socialMedia.website',
+        'socialMedia.instagram',
+        'socialMedia.other',
+      ])
+      .where('venue.venue_operator_id = :venueOperatorId', { venueOperatorId: venueOperatorId })
+      .getRawOne();
+  }
+
   async update(id: string, payload: Partial<VenueEntity>): Promise<VenueEntity> {
     const entity = await this.venueRepository.findOne({ where: { id } });
 

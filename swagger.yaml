@@ -122,19 +122,8 @@ paths:
         '200':
           description: ''
   /venue/{id}:
-    get:
-      operationId: VenueController_findOne
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-    patch:
-      operationId: VenueController_update
+    put:
+      operationId: VenueController_updateVenueProfile
       parameters:
         - name: id
           required: true
@@ -146,12 +135,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateVenueDto'
+              $ref: '#/components/schemas/UpdateVenueProfileDto'
+      responses:
+        '200':
+          description: ''
+    get:
+      operationId: VenueController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''
     delete:
       operationId: VenueController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+  /venue/profile/{id}:
+    get:
+      operationId: VenueController_get
       parameters:
         - name: id
           required: true
@@ -237,7 +249,7 @@ components:
     CreateVenueDto:
       type: object
       properties: {}
-    UpdateVenueDto:
+    UpdateVenueProfileDto:
       type: object
       properties: {}
     CreateSocialMediaDto:

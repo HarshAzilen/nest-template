@@ -25,7 +25,6 @@ export class UserRepository extends CommonRepository<UserEntity> {
     return await this.userRepository.find();
   }
   async searchByEmail(email: string, venueOperatorId: string): Promise<UserEntity[]> {
-    console.log('🚀 ~ UserRepository ~ searchByEmail ~ email:', email);
     return await this.userRepository
       .createQueryBuilder('user')
       .where('user.email LIKE :email', { email: `%${email}%` })
@@ -42,18 +41,7 @@ export class UserRepository extends CommonRepository<UserEntity> {
       .getRawOne();
   }
 
-  async update(id: string, payload: Partial<UserEntity>): Promise<UserEntity> {
-    // Find the entity by ID
-    const entity = await this.userRepository.findOne({ where: { id } });
-
-    if (!entity) {
-      throw new Error(UserMessages.NOT_FOUND);
-    }
-
-    // Update the entity with the payload
-    Object.assign(entity, payload);
-
-    // Save the updated entity
+  async update(entity: Partial<UserEntity>): Promise<UserEntity> {
     return await this.userRepository.save(entity);
   }
 
